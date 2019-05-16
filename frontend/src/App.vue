@@ -14,6 +14,8 @@ export default {
 <style>
 div {
   font-family: sans-serif;
+  font-size: small;
   border: thin dotted;
+  padding: 5px;
 }
 </style>

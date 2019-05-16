@@ -6,16 +6,25 @@ const Axios = axios.create({
 
 export default {
    register (credentials) {
-    console.log('AXIOS post /auth/register pre axios 2',credentials);
     return Axios
       .post('/auth/register',credentials)
-      .then(data => {
-        console.log('AXIOS post then 5',data);
-        return data;
+      .then(response => {
+        return response.data;
       })
       .catch(error => {
-        console.log('AXIOS post error 5',error);
         return error;
       });
-  }
+  },
+
+  getUsers () {
+   return Axios
+     .get('/users')
+     .then(response => {
+       return response.data;
+     })
+     .catch(error => {
+       return error;
+     });
+ }
+
 }

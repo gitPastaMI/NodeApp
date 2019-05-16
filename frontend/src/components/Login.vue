@@ -36,16 +36,18 @@ export default {
 
   methods:{
     register () {
-      console.log('FRONTEND register component 1');
-      API.register(this.credentials)
-      .then(data => {
-        console.log('FRONTEND register component 6',data);
-        this.user = data;
-      })
-      .catch(error => {
-        console.log('FRONTEND register component 6',error);
-        this.error = error;
-      });
+      API
+        .register(this.credentials)
+        .then(data => {
+          this.user = data;
+        },
+        error => {
+          this.error = error;
+        })
+        .catch(error => {
+          this.error = error;
+        });
+      this.read();
     },
 
     login () {
@@ -54,7 +56,17 @@ export default {
     },
 
     read () {
-      console.log('read component');
+      API
+        .getUsers()
+        .then(data => {
+          this.users = data;
+        },
+        error => {
+          this.error = error;
+        })
+        .catch(error => {
+          this.error = error;
+        });
     },
   },
 
