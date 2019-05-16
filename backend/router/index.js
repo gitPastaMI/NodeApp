@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-router.post();
+router.use(require('./auth'));
 
-router.post();
-
-router.get();
+module.exports = router;

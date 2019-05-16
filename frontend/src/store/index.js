@@ -18,12 +18,6 @@ export default new Vuex.Store({
   },
 // *******************************
   actions: {
-    register (context,credentials) {
-      console.log('store action register pre commit 2', credentials);
-      // TODO : api post
-      console.log('store action register post commit 3', credentials);
-    },
-
     login (context,credentials) {
       console.log('store action login pre commit 2', credentials);
       // TODO : api post
