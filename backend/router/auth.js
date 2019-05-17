@@ -8,42 +8,29 @@ const User = require('../db').User;
 // *****************************************************************************
 
 router.post('/auth/register',(req,res) => {
+  console.log('backend register 3',req.body);
   User.findOne({where:{username:req.body.username}})
-  .then(user => {
-    if (!user) {
-      bcrypt.hash(req.body.password, saltRounds)
-      .then(hash => {
-        req.body.password = hash;
-      })
-      .catch(error => {
-        throw error;
-      });
-      // .then(hash => {
-      //
-      //   User
-      //     .create(req.body)
-      //     .then(user => {
-      //       res.send(user);
-      //     })
-      //     .catch(error => {
-      //       // res.send(error);
-      //       throw error;
-      //     });
-      //   })
-      //   .catch(error => {
-      //     throw error;
-      //   })
-      //  }
-    } else {
-      throw 'Username already exists.'
-    }
-  })
-  .catch(error => {
-    // res.send(error);
-    throw error;
+    .then(user => {
+      if (!user) {
+        bcrypt.hash(req.body.password, saltRounds)
+        .then(hash => {
+          req.body.password = hash;
+          User
+          .create(req.body)
+          .then(user => {
+            console.log('backend register OK 4',req.body);
+            res.send(user);
+          });
+        });
+      } else {
+        console.log('backend register KO 4',req.body);
+        res.send({feedback: {type:'error', message:'Username already exists'}});
+      }
+    })
+    .catch(error => {
+      res.send(error);
+    });
   });
-
-});
 
 router.post('/auth/login',(req,res) => {
   const user = req.body;
@@ -56,10 +43,18 @@ router.get('/users',(req,res) => {
     .then(users => {
       res.send(users);
     })
-    .catch(error => {
-      // res.send(error);
-      throw error;
-    });
+    // .catch(error => {
+    //   // res.send(error);
+    //   throw error;
+    // });
+});
+
+router.delete('/user',(req,res) => {
+  User
+    .findByPk(req.user.id)
+    .then(user => {
+      user.destroy();
+    })
 });
 
 module.exports = router;

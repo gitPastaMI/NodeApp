@@ -16,6 +16,7 @@
     <div class="">
       <div class="" v-for="user in users">
         {{user}}
+        <button type="button" v-on:click="remove(user)">delete</button>
       </div>
     </div>
   </div>
@@ -36,15 +37,21 @@ export default {
 
   methods:{
     register () {
+      console.log('component register 1',this.credentials);
       API
         .register(this.credentials)
-        .then(data => {
-          this.user = data;
-        },
-        error => {
-          this.error = error;
-        })
+        .then(
+          data => {
+            if (data.feedback) {
+              console.log('component register feedback 6',data.feedback);
+              this.error = data.feedback;
+            } else {
+              console.log('component register data 6',data);
+              this.user = data;
+            }
+          })
         .catch(error => {
+          console.log('component register error 6',error);
           this.error = error;
         });
       this.read();
@@ -58,16 +65,29 @@ export default {
     read () {
       API
         .getUsers()
-        .then(data => {
-          this.users = data;
-        },
-        error => {
+        .then(
+          data => {
+            this.users = data;
+          },
+          error => {
+            this.error = error;
+          })
+        .catch(error => {
           this.error = error;
+        });
+    },
+
+    remove (user) {
+      API
+        .removeUser(user)
+        .then(data => {
+          this.read();
         })
         .catch(error => {
           this.error = error;
         });
     },
+
   },
 
   mounted () {
