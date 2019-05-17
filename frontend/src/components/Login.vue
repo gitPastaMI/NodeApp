@@ -4,11 +4,8 @@
     <div class="">
       <input type="text" v-model="credentials.username" autofocus>
       <input type="password" v-model="credentials.password">
-      <button type="button" v-on:click="register()">Register</button>
       <button type="button" v-on:click="login()">Login</button>
-    </div>
-    <div class="">
-      {{user}}
+      <button type="button" v-on:click="register()">Register</button>
     </div>
     <div class="">
       {{error}}
@@ -29,7 +26,6 @@ export default {
   data () {
     return {
       credentials: {},
-      user: null,
       error: null,
       users: null,
     }
@@ -37,65 +33,57 @@ export default {
 
   methods:{
     register () {
-      console.log('component register 1',this.credentials);
       API
         .register(this.credentials)
-        .then(
-          data => {
-            console.log('component register data 6',data);
+        .then(data => {
             this.user = data;
             this.read();
           })
         .catch(error => {
-          if (error.response.status===418) {
-            console.log('component register error 6',error.response.data);
-            this.error = error.response.data;
-          } else {
-            console.log('component register error 6',error);
-            this.error = error;
-          }
+          this.error = API.handleError(error);
+          // if (error.response.status===418) {
+          //   console.log('component register error 6',error.response.data);
+          //   this.error = error.response.data;
+          // } else {
+          //   console.log('component register error 6',error);
+          //   this.error = error;
+          // }
         });
     },
 
     login () {
-      // this.$store.dispatch('login',this.credentials)
-      console.log('login comonent');
+      API
+        .login(this.credentials)
+        .then(data => {
+          this.$store.dispatch('login',data)
+            .then(response => {
+              this.$router.push({name:'home'});
+            });
+        })
+        .catch(error => {
+          this.error = API.handleError(error);
+        });
     },
 
     read () {
       API
         .getUsers()
-        .then(
-          data => {
-            this.users = data;
-          })
+        .then(data => {
+          this.users = data;
+        })
         .catch(error => {
-          if (error.response.status===418) {
-            console.log('component register error 6',error.response.data);
-            this.error = error.response.data;
-          } else {
-            console.log('component register error 6',error);
-            this.error = error;
-          }
+          this.error = API.handleError(error);
         });
     },
 
     remove (user) {
-      console.log('component remove 1',user);
       API
         .removeUser(user)
         .then(data => {
-          console.log('component remove data 6',data);
           this.read();
         })
         .catch(error => {
-          if (error.response.status===418) {
-            console.log('component register error 6',error.response.data);
-            this.error = error.response.data;
-          } else {
-            console.log('component register error 6',error);
-            this.error = error;
-          }
+          this.error = API.handleError(error);
         });
     },
 

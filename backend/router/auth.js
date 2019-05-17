@@ -8,7 +8,6 @@ const User = require('../db').User;
 // *****************************************************************************
 
 router.post('/auth/register',(req,res) => {
-  console.log('backend register 3',req.body);
   User.findOne({where:{username:req.body.username}})
     .then(user => {
       if (!user) {
@@ -18,24 +17,28 @@ router.post('/auth/register',(req,res) => {
           User
           .create(req.body)
           .then(user => {
-            console.log('backend register OK 4',req.body);
             res.send(user);
           });
         });
       } else {
-        console.log('backend register KO 4',req.body);
-        // res.send({feedback: {type:'error', message:'Username already exists'}});
         res.status(418).send('Username already exists');
       }
     })
-    .catch(error => {
-      res.send(error);
-    });
   });
 
 router.post('/auth/login',(req,res) => {
-  const user = req.body;
-  res.send(user);
+  User.findOne({where:{username:req.body.username}})
+    .then(user => {
+      if (user) {
+        if (bcrypt.compareSync(req.body.password, user.password)) {
+          res.send(user);
+        } else {
+          res.status(418).send('Invalid password');
+        }
+      } else {
+        res.status(418).send('Invalid username');
+      }
+    })
 });
 
 router.get('/users',(req,res) => {
@@ -44,21 +47,14 @@ router.get('/users',(req,res) => {
     .then(users => {
       res.send(users);
     })
-    // .catch(error => {
-    //   // res.send(error);
-    //   throw error;
-    // });
 });
 
 router.delete('/user',(req,res,next) => {
-  console.log('backend delete 3',req.body);
   User
     .findByPk(req.body.id)
     .then(user => {
-      console.log('backend delete 3B',user.id);
       user.destroy()
       .then(() => {
-        console.log('backend destroy 4',);
         res.send('success');
       });
     })

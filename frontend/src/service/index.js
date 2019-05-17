@@ -5,12 +5,18 @@ const Axios = axios.create({
   })
 
 export default {
+   handleError (error) {
+     if (error.response.status===418) {
+       return error.response.data;
+     } else {
+       return error;
+     }
+   },
+
    register (credentials) {
-    console.log('service register 2',credentials);
     return Axios
       .post('/auth/register',credentials)
       .then(response => {
-        console.log('service register response data 5',response.data);
         return response.data;
       })
       // .catch(error => {
@@ -19,12 +25,18 @@ export default {
       // });
   },
 
+  login (credentials) {
+    return Axios
+      .post('/auth/login',credentials)
+      .then(response => {
+        return response.data
+      });
+  },
+
   removeUser (user) {
-    console.log('axios remove 2',user);
     return Axios
       .delete('/user',{ data: user })
       .then(response => {
-        console.log('axios remove response 5',);
         return response.data;
       })
       // .catch(error => {
