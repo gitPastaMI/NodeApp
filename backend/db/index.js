@@ -41,7 +41,7 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-// db.Order.belongsTo(db.User);
+db.Order.belongsTo(db.User);
 
 sequelize
   .authenticate()

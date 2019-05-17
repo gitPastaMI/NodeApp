@@ -19,10 +19,6 @@ export default {
       .then(response => {
         return response.data;
       })
-      // .catch(error => {
-      //   console.log('service register error 5',error.response);
-      //   return error;
-      // });
   },
 
   login (credentials) {
@@ -39,10 +35,6 @@ export default {
       .then(response => {
         return response.data;
       })
-      // .catch(error => {
-      //   console.log('axios remove error 5',);
-      //   return error;
-      // })
   },
 
   getUsers () {
@@ -51,9 +43,14 @@ export default {
      .then(response => {
        return response.data;
      })
-     // .catch(error => {
-     //   return error;
-     // });
- }
+   },
+
+   getOrders () {
+    return Axios
+      .get('/orders')
+      .then(response => {
+        return response.data;
+      })
+    },
 
 }

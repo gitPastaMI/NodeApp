@@ -2,6 +2,9 @@
   <div class="loginComponent">
     <h1>LOGIN</h1>
     <div class="">
+      <img src="../assets/logo.png">
+    </div>
+    <div class="">
       <input type="text" v-model="credentials.username" autofocus>
       <input type="password" v-model="credentials.password">
       <button type="button" v-on:click="login()">Login</button>

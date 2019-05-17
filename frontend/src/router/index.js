@@ -1,18 +1,20 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Store from '@/store'
+import Public from '@/components/Public'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
-import Public from '@/components/Public'
+import Orders from '@/components/Orders'
 
 Vue.use(Router)
 
 const router = new Router({
   mode: 'history',
   routes: [
-    { path: '/public',  name: 'public', component: Public,  meta: { isPublic: true}},
-    { path: '/login',   name: 'login',  component: Login,   meta: { isPublic: true}},
-    { path: '/home',    name: 'home',   component: Home},
+    { path: '/public',    name: 'public',   component: Public,  meta: { isPublic: true, hasNavbar: false}},
+    { path: '/login',     name: 'login',    component: Login,   meta: { isPublic: true, hasNavbar: false}},
+    { path: '/home',      name: 'home',     component: Home},
+    { path: '/orders',    name: 'orders',   component: Orders},
     { path: '*',  redirect: {name: 'login'}}
   ]
 })

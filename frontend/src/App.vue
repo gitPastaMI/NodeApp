@@ -1,13 +1,20 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <navbar/>
     <router-view/>
   </div>
 </template>
 
 <script>
+import navbar from './components/Navbar.vue'
 export default {
-  name: 'App'
+  name: 'App',
+  components: {navbar},
+  data () {
+    return {
+
+    }
+  },
 }
 </script>
 

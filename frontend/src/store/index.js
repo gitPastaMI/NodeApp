@@ -6,6 +6,11 @@ export default new Vuex.Store({
 // *******************************
   state: {
     user: null,
+    navbarLinks: [
+        {key:1, label: 'Home',    route:{ name: 'home'}},
+        {key:2, label: 'Orders',  route:{ name: 'orders'}},
+        // {key:5, label: 'Logout',  route:{ name: 'login'}}
+      ]
   },
 // *******************************
   mutations: {
@@ -19,7 +24,7 @@ export default new Vuex.Store({
       state.user = user;
       localStorage.setItem('localStorageState', JSON.stringify(state));
     },
-    
+
     unsetUser (state) {
       state.user = null;
       localStorage.removeItem('localStorageState');
@@ -51,6 +56,9 @@ getters: {
         return false
       }
       return true
+    },
+    getNavbarLinks: (state) => {
+      return state.navbarLinks
     },
   }
 // *******************************
