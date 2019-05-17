@@ -11,7 +11,7 @@
       {{error}}
     </div>
 
-    <div class="" v-for="order in orders">
+    <div class="" v-for="order in orders" v-on:click="edit(order)">
       {{order}}
     </div>
 
@@ -42,7 +42,11 @@ export default {
     },
 
     add () {
-      console.log('add');
+      this.$router.push({name: 'ordernew'});
+    },
+
+    edit (order) {
+      this.$router.push({name: 'orderedit', id:order.id});
     },
 
     exit () {

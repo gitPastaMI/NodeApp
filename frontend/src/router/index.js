@@ -5,6 +5,7 @@ import Public from '@/components/Public'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
 import Orders from '@/components/Orders'
+import Order from '@/components/Order'
 
 Vue.use(Router)
 
@@ -15,6 +16,8 @@ const router = new Router({
     { path: '/login',     name: 'login',    component: Login,   meta: { isPublic: true, hasNavbar: false}},
     { path: '/home',      name: 'home',     component: Home},
     { path: '/orders',    name: 'orders',   component: Orders},
+    { path: '/order/new', name: 'ordernew', component: Order},
+    { path: '/order/:id', name: 'orderedit', component: Order},
     { path: '*',  redirect: {name: 'login'}}
   ]
 })

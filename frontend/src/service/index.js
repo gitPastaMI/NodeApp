@@ -53,4 +53,20 @@ export default {
       })
     },
 
+    getInitOrder () {
+     return Axios
+       .get('/order')
+       .then(response => {
+         return response.data;
+       })
+     },
+
+   saveOrder (order) {
+    return Axios
+      .post('/order',order)
+      .then(response => {
+        return response.data;
+      })
+    },
+
 }
