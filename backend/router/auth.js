@@ -24,7 +24,8 @@ router.post('/auth/register',(req,res) => {
         });
       } else {
         console.log('backend register KO 4',req.body);
-        res.send({feedback: {type:'error', message:'Username already exists'}});
+        // res.send({feedback: {type:'error', message:'Username already exists'}});
+        res.status(418).send('Username already exists');
       }
     })
     .catch(error => {
@@ -39,7 +40,7 @@ router.post('/auth/login',(req,res) => {
 
 router.get('/users',(req,res) => {
   User
-    .findAll()
+    .findAll({order:[['createdAt', 'DESC']]})
     .then(users => {
       res.send(users);
     })
@@ -49,11 +50,17 @@ router.get('/users',(req,res) => {
     // });
 });
 
-router.delete('/user',(req,res) => {
+router.delete('/user',(req,res,next) => {
+  console.log('backend delete 3',req.body);
   User
-    .findByPk(req.user.id)
+    .findByPk(req.body.id)
     .then(user => {
-      user.destroy();
+      console.log('backend delete 3B',user.id);
+      user.destroy()
+      .then(() => {
+        console.log('backend destroy 4',);
+        res.send('success');
+      });
     })
 });
 

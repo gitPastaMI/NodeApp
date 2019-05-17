@@ -13,21 +13,24 @@ export default {
         console.log('service register response data 5',response.data);
         return response.data;
       })
-      .catch(error => {
-        console.log('service register error 5',error);
-        return error;
-      });
+      // .catch(error => {
+      //   console.log('service register error 5',error.response);
+      //   return error;
+      // });
   },
 
   removeUser (user) {
+    console.log('axios remove 2',user);
     return Axios
-      .delete('/user',user)
+      .delete('/user',{ data: user })
       .then(response => {
+        console.log('axios remove response 5',);
         return response.data;
       })
-      .catch(error => {
-        return error;
-      })
+      // .catch(error => {
+      //   console.log('axios remove error 5',);
+      //   return error;
+      // })
   },
 
   getUsers () {

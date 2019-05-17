@@ -42,19 +42,19 @@ export default {
         .register(this.credentials)
         .then(
           data => {
-            if (data.feedback) {
-              console.log('component register feedback 6',data.feedback);
-              this.error = data.feedback;
-            } else {
-              console.log('component register data 6',data);
-              this.user = data;
-            }
+            console.log('component register data 6',data);
+            this.user = data;
+            this.read();
           })
         .catch(error => {
-          console.log('component register error 6',error);
-          this.error = error;
+          if (error.response.status===418) {
+            console.log('component register error 6',error.response.data);
+            this.error = error.response.data;
+          } else {
+            console.log('component register error 6',error);
+            this.error = error;
+          }
         });
-      this.read();
     },
 
     login () {
@@ -68,23 +68,34 @@ export default {
         .then(
           data => {
             this.users = data;
-          },
-          error => {
-            this.error = error;
           })
         .catch(error => {
-          this.error = error;
+          if (error.response.status===418) {
+            console.log('component register error 6',error.response.data);
+            this.error = error.response.data;
+          } else {
+            console.log('component register error 6',error);
+            this.error = error;
+          }
         });
     },
 
     remove (user) {
+      console.log('component remove 1',user);
       API
         .removeUser(user)
         .then(data => {
+          console.log('component remove data 6',data);
           this.read();
         })
         .catch(error => {
-          this.error = error;
+          if (error.response.status===418) {
+            console.log('component register error 6',error.response.data);
+            this.error = error.response.data;
+          } else {
+            console.log('component register error 6',error);
+            this.error = error;
+          }
         });
     },
 
