@@ -18,16 +18,53 @@ router.get('/orders',(req,res) => {
 });
 
 router.get('/order',(req,res) => {
-  const order = Order.build();
-  res.send(order);
+  res.send(Order.build());
+});
+
+router.get('/order/:id',(req,res) => {
+  Order
+  .findByPk(req.params.id)
+  .then(order => {
+    res.send(order);
+  })
+  .catch(error => {
+    res.send(error);
+  });
 });
 
 router.post('/order',(req,res) => {
+  console.log('***************************************');
+  console.log(req.body.order);
+  console.log('***************************************');
+  console.log(req.body.user);
+  console.log('***************************************');
   Order
-    .create(req.body)
+    .create(req.body.order)
     .then(order => {
+      console.log('++++++++++++++++++++++++++++++++++++++++');
+      console.log(order);
+      console.log('++++++++++++++++++++++++++++++++++++++++');
+      order.setUser(req.body.user);
+      console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+      console.log(order);
+      console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
       res.send(order);
-    });
+    })
+  .catch(error => {
+    res.send(error);
+  });
+});
+
+router.put('/order',(req,res) => {
+  Order
+    .update(req.body,{where:{id:req.body.id}})
+    .then(() => {
+      Order
+      .findByPk(req.body.id)
+      .then(order => {
+        res.send(order);
+      })
+    })
 });
 
 router.delete('/order',(req,res,next) => {

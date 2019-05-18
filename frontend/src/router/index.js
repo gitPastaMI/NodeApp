@@ -12,12 +12,12 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   routes: [
-    { path: '/public',    name: 'public',   component: Public,  meta: { isPublic: true, hasNavbar: false}},
-    { path: '/login',     name: 'login',    component: Login,   meta: { isPublic: true, hasNavbar: false}},
-    { path: '/home',      name: 'home',     component: Home},
-    { path: '/orders',    name: 'orders',   component: Orders},
-    { path: '/order/new', name: 'ordernew', component: Order},
-    { path: '/order/:id', name: 'orderedit', component: Order},
+    { path: '/public',    name: 'public',     component: Public,  meta: { isPublic: true, hasNavbar: false}},
+    { path: '/login',     name: 'login',      component: Login,   meta: { isPublic: true, hasNavbar: false}},
+    { path: '/home',      name: 'home',       component: Home},
+    { path: '/orders',    name: 'orders',     component: Orders},
+    { path: '/order',     name: 'ordernew',   component: Order},
+    { path: '/order/:id', name: 'orderedit',  component: Order},
     { path: '*',  redirect: {name: 'login'}}
   ]
 })

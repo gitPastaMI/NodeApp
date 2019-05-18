@@ -2,13 +2,13 @@
   <div class="navbarComponent" v-if="hasNavbar">
     <nav>
       <div class="">
-        <img src="../assets/logo.png">
+        <img src="../assets/logo.png" height="75" width="75">
       </div>
       <!-- <logo/>-->
       <router-link v-if="isLogged" v-for="link in links" :to="link.route" exact tag="div" class="btn" :key="link.key">
         {{link.label}}
       </router-link>
-      <router-link v-else :to="login" exact tag="div" class="btn">Login</router-link>
+      <router-link v-else :to="{name: 'login'}" exact tag="div" class="btn">Login</router-link>
     </nav>
     <div>
       {{user}}

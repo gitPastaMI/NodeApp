@@ -13,7 +13,7 @@ export default {
      }
    },
 
-   register (credentials) {
+  register (credentials) {
     return Axios
       .post('/auth/register',credentials)
       .then(response => {
@@ -61,12 +61,36 @@ export default {
        })
      },
 
-   saveOrder (order) {
-    return Axios
-      .post('/order',order)
-      .then(response => {
-        return response.data;
-      })
+   saveOrder (order,user) {
+     if (order.id) {
+       return Axios
+       .put('/order',order)
+       .then(response => {
+         return response.data;
+       })
+     } else {
+       return Axios
+       .post('/order',{order,user})
+       .then(response => {
+         return response.data;
+       })
+     }
     },
+
+    getOrder (id) {
+     return Axios
+       .get('/order/'+id)
+       .then(response => {
+         return response.data;
+       })
+     },
+
+     removeOrder (order) {
+       return Axios
+         .delete('/order',{ data: order })
+         .then(response => {
+           return response.data;
+         })
+     },
 
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="ordersComponent">
+  <div class="ordersComponent" v-bind:class="{ disabled: isDisabled }">
     <h1>ORDERS</h1>
 
     <div class="">
@@ -26,11 +26,13 @@ export default {
     return {
       error: null,
       orders: null,
+      isDisabled: false,
     }
   },
 
   methods:{
     read () {
+      this.toggleDisabled();
       API
         .getOrders()
         .then(data => {
@@ -38,6 +40,9 @@ export default {
         })
         .catch(error => {
           this.error = API.handleError(error);
+        })
+        .then(()=>{
+          this.toggleDisabled();
         });
     },
 
@@ -46,11 +51,15 @@ export default {
     },
 
     edit (order) {
-      this.$router.push({name: 'orderedit', id:order.id});
+      this.$router.push({name: 'orderedit', params:{id:order.id}});
     },
 
     exit () {
-      this.$router.go(-1);
+      this.$router.push({name: 'home'});
+    },
+
+    toggleDisabled () {
+      this.isDisabled = !this.isDisabled;
     },
 
   },

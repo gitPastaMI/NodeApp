@@ -1,5 +1,5 @@
 <template>
-  <div class="loginComponent">
+  <div class="loginComponent" v-bind:class="{ disabled: isDisabled }">
     <h1>LOGIN</h1>
     <div class="">
       <img src="../assets/logo.png">
@@ -31,19 +31,26 @@ export default {
       credentials: {},
       error: null,
       users: null,
+      isDisabled: false,
     }
   },
 
   methods:{
     register () {
+      this.toggleDisabled ();
+
       API
         .register(this.credentials)
         .then(data => {
             this.user = data;
+            this.toggleDisabled ();
+
             this.read();
           })
         .catch(error => {
           this.error = API.handleError(error);
+          this.toggleDisabled ();
+
           // if (error.response.status===418) {
           //   console.log('component register error 6',error.response.data);
           //   this.error = error.response.data;
@@ -55,6 +62,7 @@ export default {
     },
 
     login () {
+      this.toggleDisabled ();
       API
         .login(this.credentials)
         .then(data => {
@@ -65,10 +73,15 @@ export default {
         })
         .catch(error => {
           this.error = API.handleError(error);
+        })
+        .then(()=>{
+          this.toggleDisabled();
         });
+
     },
 
     read () {
+      this.toggleDisabled ();
       API
         .getUsers()
         .then(data => {
@@ -76,10 +89,14 @@ export default {
         })
         .catch(error => {
           this.error = API.handleError(error);
+        })
+        .then(()=>{
+          this.toggleDisabled();
         });
     },
 
     remove (user) {
+      this.toggleDisabled ();
       API
         .removeUser(user)
         .then(data => {
@@ -87,9 +104,15 @@ export default {
         })
         .catch(error => {
           this.error = API.handleError(error);
+        })
+        .then(()=>{
+          this.toggleDisabled();
         });
     },
 
+    toggleDisabled () {
+      this.isDisabled = !this.isDisabled;
+    },
   },
 
   mounted () {
