@@ -1,7 +1,10 @@
-const DataTypes = require('sequelize');
-const db = require('./index');
+// *****************************************************************************
+// https://sequelize.readthedocs.io/en/1.7.0/articles/express/
+// *****************************************************************************
 
-const User = db.define('User', {
+'use strict';
+module.exports = (sequelize, DataTypes) => {
+  var User = sequelize.define('User', {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -27,8 +30,5 @@ const User = db.define('User', {
     version: true,
   });
 
-User.associate = (models) => {
-  models.User.hasMany(models.Order);
+  return User;
 };
-
-module.exports = User;

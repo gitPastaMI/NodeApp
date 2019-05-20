@@ -9,6 +9,8 @@ app.use(bodyParser.json());
 const cors = require('cors');
 app.use(cors());
 
+const db = require('./db')
+
 app.use(require('./router/index'));
 
 app.listen(port, () => console.log(`Backend server app listening on port ${port}!`))

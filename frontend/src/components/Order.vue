@@ -29,6 +29,12 @@
       <input type="text" v-model="order.version" disabled>
       <input type="text" v-model="order.createdAt" disabled>
       <input type="text" v-model="order.updatedAt" disabled>
+      <input type="text" v-model="order.orderId" disabled>
+    </div>
+
+    <button type="button" v-on:click="add()">add</button>
+    <div class="" v-for="item in order.items" v-on:click="edit(item)">
+      {{item}}
     </div>
 
   </div>
@@ -104,6 +110,18 @@ export default {
         .then(()=>{
           this.toggleDisabled();
         });
+    },
+
+    add() {
+      this.toggleDisabled();
+      console.log('add');
+      this.toggleDisabled();
+    },
+
+    edit() {
+      this.toggleDisabled();
+      console.log('edit');
+      this.toggleDisabled();
     },
 
     exit () {
