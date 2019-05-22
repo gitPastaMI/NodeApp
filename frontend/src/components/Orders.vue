@@ -1,18 +1,23 @@
 <template>
-  <div class="ordersComponent" v-bind:class="{ disabled: isDisabled }">
-    <h1>ORDERS</h1>
-
-    <div class="">
-      <button type="button" v-on:click="add()">add</button>
-      <button type="button" v-on:click="exit()">exit</button>
+  <div class="ordersComponent">
+    <div class="" v-if="isLoading()">
+      <h1>Loading...</h1>
     </div>
+    <div class="" v-else>
+      <h1>ORDERS</h1>
 
-    <div class="">
-      {{error}}
-    </div>
+      <div class="">
+        <button type="button" v-on:click="add()">add</button>
+        <button type="button" v-on:click="exit()">exit</button>
+      </div>
 
-    <div class="" v-for="order in orders" v-on:click="edit(order)">
-      {{order}}
+      <div class="">
+        {{error}}
+      </div>
+
+      <div class="" v-for="order in orders" v-on:click="edit(order)">
+        {{order}}
+      </div>
     </div>
 
   </div>
@@ -26,13 +31,20 @@ export default {
     return {
       error: null,
       orders: null,
-      isDisabled: false,
+      loading: false,
     }
   },
 
   methods:{
+    toggleLoading () {
+      this.loading = !this.loading;
+    },
+    isLoading () {
+      return this.loading;
+    },
+
     read () {
-      this.toggleDisabled();
+      this.toggleLoading();
       API
         .getOrders()
         .then(data => {
@@ -42,7 +54,7 @@ export default {
           this.error = API.handleError(error);
         })
         .then(()=>{
-          this.toggleDisabled();
+          this.toggleLoading();
         });
     },
 
@@ -56,10 +68,6 @@ export default {
 
     exit () {
       this.$router.push({name: 'home'});
-    },
-
-    toggleDisabled () {
-      this.isDisabled = !this.isDisabled;
     },
 
   },

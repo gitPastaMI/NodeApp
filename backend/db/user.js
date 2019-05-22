@@ -27,8 +27,4 @@ const User = db.define('User', {
     version: true,
   });
 
-User.associate = (models) => {
-  models.User.hasMany(models.Order);
-};
-
 module.exports = User;

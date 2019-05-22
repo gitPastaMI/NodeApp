@@ -1,42 +1,47 @@
 <template>
-  <div class="orderComponent" v-bind:class="{ disabled: isDisabled }">
-    <h1>ORDER</h1>
-    <div class="">
-      <button type="button" v-on:click="save()">save</button>
-      <button type="button" v-on:click="remove()" v-if="(order.id)">delete</button>
-      <button type="button" v-on:click="exit()">exit</button>
+  <div class="orderComponent">
+    <div class="" v-if="isLoading()">
+      <h1>Loading...</h1>
     </div>
+    <div class="" v-else>
+      <h1>ORDER</h1>
+      <div class="">
+        <button type="button" v-on:click="save()">save</button>
+        <button type="button" v-on:click="remove()" v-if="(order.id)">delete</button>
+        <button type="button" v-on:click="exit()">exit</button>
+      </div>
 
-    <div class="">
-      {{error}}
+      <div class="">
+        {{error}}
+      </div>
+
+      <div class="">
+        {{order}}
+      </div>
+
+      <div class="">
+        <input type="text" v-model="order.id" disabled>
+        <input type="text" v-model="order.order_status" disabled>
+        <input type="text" v-model="order.order_date" disabled>
+      </div>
+
+      <div class="">
+        <input type="text" v-model="order.order_num">
+      </div>
+
+      <div class="">
+        <input type="text" v-model="order.version" disabled>
+        <input type="text" v-model="order.createdAt" disabled>
+        <input type="text" v-model="order.updatedAt" disabled>
+        <input type="text" v-model="order.UserId" disabled>
+        {{order.User}}
+      </div>
+
+      <button type="button" v-on:click="add()">add</button>
+      <div class="" v-for="item in order.items" v-on:click="edit(item)">
+        {{item}}
+      </div>
     </div>
-
-    <div class="">
-      {{order}}
-    </div>
-
-    <div class="">
-      <input type="text" v-model="order.id" disabled>
-      <input type="text" v-model="order.order_status" disabled>
-      <input type="text" v-model="order.order_date" disabled>
-    </div>
-
-    <div class="">
-      <input type="text" v-model="order.order_num">
-    </div>
-
-    <div class="">
-      <input type="text" v-model="order.version" disabled>
-      <input type="text" v-model="order.createdAt" disabled>
-      <input type="text" v-model="order.updatedAt" disabled>
-      <input type="text" v-model="order.orderId" disabled>
-    </div>
-
-    <button type="button" v-on:click="add()">add</button>
-    <div class="" v-for="item in order.items" v-on:click="edit(item)">
-      {{item}}
-    </div>
-
   </div>
 </template>
 
@@ -44,16 +49,25 @@
 import API from '@/service'
 export default {
   name: 'Order',
+
   data () {
     return {
       error: null,
       order: {},
-      isDisabled: false,
+      loading: false,
     }
   },
+
   methods:{
+    toggleLoading () {
+      this.loading = !this.loading;
+    },
+    isLoading () {
+      return this.loading;
+    },
+
     init () {
-      this.toggleDisabled();
+      this.toggleLoading();
       API
         .getInitOrder()
         .then(data => {
@@ -63,12 +77,12 @@ export default {
           this.error = API.handleError(error);
         })
         .then(()=>{
-          this.toggleDisabled();
+          this.toggleLoading();
         });
     },
 
     read (id) {
-      this.toggleDisabled();
+      this.toggleLoading();
       API
        .getOrder(id)
        .then(data => {
@@ -78,12 +92,12 @@ export default {
          this.error = API.handleError(error);
        })
        .then(()=>{
-         this.toggleDisabled();
+         this.toggleLoading();
        });
     },
 
     save () {
-      this.toggleDisabled();
+      this.toggleLoading();
       API
         .saveOrder(this.order,this.$store.getters.getUser)
         .then(data => {
@@ -93,12 +107,12 @@ export default {
           this.error = API.handleError(error);
         })
         .then(()=>{
-          this.toggleDisabled();
+          this.toggleLoading();
         });
     },
 
     remove () {
-      this.toggleDisabled();
+      this.toggleLoading();
       API
         .removeOrder(this.order)
         .then(data => {
@@ -108,28 +122,24 @@ export default {
           this.error = API.handleError(error);
         })
         .then(()=>{
-          this.toggleDisabled();
+          this.toggleLoading();
         });
     },
 
     add() {
-      this.toggleDisabled();
+      this.toggleLoading();
       console.log('add');
-      this.toggleDisabled();
+      this.toggleLoading();
     },
 
     edit() {
-      this.toggleDisabled();
+      this.toggleLoading();
       console.log('edit');
-      this.toggleDisabled();
+      this.toggleLoading();
     },
 
     exit () {
       this.$router.push({name: 'orders'});
-    },
-
-    toggleDisabled () {
-      this.isDisabled = !this.isDisabled;
     },
 
   },

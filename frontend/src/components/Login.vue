@@ -1,22 +1,27 @@
 <template>
-  <div class="loginComponent" v-bind:class="{ disabled: isDisabled }">
-    <h1>LOGIN</h1>
-    <div class="">
-      <img src="../assets/logo.png">
+  <div class="loginComponent">
+    <div class="" v-if="isLoading()">
+      <h1>Loading...</h1>
     </div>
-    <div class="">
-      <input type="text" v-model="credentials.username" autofocus>
-      <input type="password" v-model="credentials.password">
-      <button type="button" v-on:click="login()">Login</button>
-      <button type="button" v-on:click="register()">Register</button>
-    </div>
-    <div class="">
-      {{error}}
-    </div>
-    <div class="">
-      <div class="" v-for="user in users">
-        {{user}}
-        <button type="button" v-on:click="remove(user)">delete</button>
+    <div class="" v-else>
+      <h1>LOGIN</h1>
+      <div class="">
+        <img src="../assets/logo.png">
+      </div>
+      <div class="">
+        <input type="text" v-model="credentials.username" autofocus>
+        <input type="password" v-model="credentials.password">
+        <button type="button" v-on:click="login()">Login</button>
+        <button type="button" v-on:click="register()">Register</button>
+      </div>
+      <div class="">
+        {{error}}
+      </div>
+      <div class="">
+        <div class="" v-for="user in users">
+          {{user}}
+          <button type="button" v-on:click="remove(user)">delete</button>
+        </div>
       </div>
     </div>
   </div>
@@ -31,38 +36,37 @@ export default {
       credentials: {},
       error: null,
       users: null,
-      isDisabled: false,
+      loading: false,
     }
   },
 
   methods:{
-    register () {
-      this.toggleDisabled ();
+    toggleLoading () {
+      this.loading = !this.loading;
+    },
+    isLoading () {
+      return this.loading;
+    },
 
+    register () {
+      this.toggleLoading ();
       API
         .register(this.credentials)
         .then(data => {
             this.user = data;
-            this.toggleDisabled ();
-
             this.read();
           })
         .catch(error => {
           this.error = API.handleError(error);
-          this.toggleDisabled ();
-
-          // if (error.response.status===418) {
-          //   console.log('component register error 6',error.response.data);
-          //   this.error = error.response.data;
-          // } else {
-          //   console.log('component register error 6',error);
-          //   this.error = error;
-          // }
+          this.toggleLoading ();
+        })
+        .then(()=>{
+          this.toggleLoading();
         });
     },
 
     login () {
-      this.toggleDisabled ();
+      this.toggleLoading ();
       API
         .login(this.credentials)
         .then(data => {
@@ -75,13 +79,13 @@ export default {
           this.error = API.handleError(error);
         })
         .then(()=>{
-          this.toggleDisabled();
+          this.toggleLoading();
         });
 
     },
 
     read () {
-      this.toggleDisabled ();
+      this.toggleLoading ();
       API
         .getUsers()
         .then(data => {
@@ -91,12 +95,12 @@ export default {
           this.error = API.handleError(error);
         })
         .then(()=>{
-          this.toggleDisabled();
+          this.toggleLoading();
         });
     },
 
     remove (user) {
-      this.toggleDisabled ();
+      this.toggleLoading ();
       API
         .removeUser(user)
         .then(data => {
@@ -106,13 +110,10 @@ export default {
           this.error = API.handleError(error);
         })
         .then(()=>{
-          this.toggleDisabled();
+          this.toggleLoading();
         });
     },
 
-    toggleDisabled () {
-      this.isDisabled = !this.isDisabled;
-    },
   },
 
   mounted () {

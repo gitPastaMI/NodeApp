@@ -30,8 +30,4 @@ const Order = db.define('Order', {
   version: true,
 });
 
-Order.associate = (models) => {
-  models.Order.hasOne(models.User);
-};
-
 module.exports = Order;

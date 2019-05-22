@@ -10,6 +10,10 @@ db
   .authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
+    // db.models.User.hasMany(db.models.Order);
+    db.models.Order.belongsTo(db.models.User);
+    db.sync();
+    console.log('Database synchronized successfully.');
   })
   .catch(err => {
     console.error('Unable to connect to the database:', err);

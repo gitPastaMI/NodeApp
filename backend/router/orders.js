@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 // const Order = require('../db').Order;
 const Order = require('../db/order');
-const User = require('../db/user');
+
 // *****************************************************************************
 // http://docs.sequelizejs.com/class/lib/model.js~Model.html
 // *****************************************************************************
@@ -24,34 +24,41 @@ router.get('/order',(req,res) => {
 });
 
 router.get('/order/:id',(req,res) => {
+  const User = require('../db/user');
   Order
-  .findByPk(req.params.id,
-    {
-      include: [{
-          model: User,
-          // where: { state: Sequelize.col('project.state') }
-      }]
+    .findByPk(req.params.id,{ include: [ User ] })
+    .then(order => {
+      res.send(order);
     })
-  .then(order => {
-    res.send(order);
-  })
-  .catch(error => {
-    res.send(error);
-  });
+    .catch(error => {
+      res.send(error);
+    });
 });
 
 router.post('/order',(req,res) => {
-  req.body.order.ownerId = req.body.user.id;
-  Order
+    Order
     .create(req.body.order)
-    .then(order => {
-      //order.setUser(req.body.user, {save: false});
-      //order.save();
-      res.send(order);
+    .then((order) => {
+      order.UserId = req.body.user.id;
+      order.save().then(order => {
+        res.send(order);
+      });
     })
-  .catch(error => {
-    res.send(error);
-  });
+    .catch(error => {
+      res.send(error);
+    });
+  // User.findByPk(req.body.user.id).then(user=>{
+  //   Order
+  //   .create(req.body.order)
+  //   .then((order) => {
+  //     order.setUser(user).then((order) => {
+  //       res.send(order);
+  //     })
+  //   })
+  //   .catch(error => {
+  //     res.send(error);
+  //   });
+  // });
 });
 
 router.put('/order',(req,res) => {
