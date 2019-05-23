@@ -10,8 +10,14 @@ db
   .authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
-    // db.models.User.hasMany(db.models.Order);
-    db.models.Order.belongsTo(db.models.User);
+    const User = require('./user');
+    const Account = require('./account');
+    const Order = require('./order');
+    Account.belongsTo(User);
+    Order.belongsTo(User);
+    Order.belongsTo(Account);/*, { as: 'account', foreignKey: 'account_id', constraints: false }*/
+    Order.belongsTo(Account, {as: 'Shipto'});
+    Order.belongsTo(Account, {as: 'Billto'});
     db.sync();
     console.log('Database synchronized successfully.');
   })

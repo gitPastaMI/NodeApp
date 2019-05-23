@@ -28,7 +28,8 @@
 </template>
 
 <script>
-import API from '@/service'
+// import API from '@/service'
+import API from '@/service/auth'
 export default {
   name: 'Login',
   data () {

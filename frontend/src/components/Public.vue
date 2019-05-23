@@ -9,9 +9,12 @@ export default {
   name: 'Public',
   data () {
     return {
-      error: null,
+
     }
   },
+  methods:{
+
+  }
 }
 </script>
 

@@ -24,7 +24,8 @@
 </template>
 
 <script>
-import API from '@/service'
+// import API from '@/service'
+import API from '@/service/orders'
 export default {
   name: 'Orders',
   data () {

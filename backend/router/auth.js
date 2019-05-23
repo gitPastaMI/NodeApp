@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-//const User = require('../db').User;
 const User = require('../db/user');
 // *****************************************************************************
 // http://docs.sequelizejs.com/class/lib/model.js~Model.html

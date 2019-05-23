@@ -4,7 +4,8 @@
       <h1>Loading...</h1>
     </div>
     <div class="" v-else>
-      <h1>ORDER</h1>
+      <h3>ORDER</h3>
+      <h1>{{order.order_num}}</h1>
       <div class="">
         <button type="button" v-on:click="save()">save</button>
         <button type="button" v-on:click="remove()" v-if="(order.id)">delete</button>
@@ -26,14 +27,29 @@
       </div>
 
       <div class="">
-        <input type="text" v-model="order.order_num">
+        <input type="text" v-model="order.order_num" autofocus>
+      </div>
+
+      <div class="">
+        {{order.Account}}
+        <accountPicker v-on:picked="setAccount"/>
+        <button type="button" v-on:click="unsetAccount">X</button>
+      </div>
+
+      <div class="">
+        {{order.Shipto}}
+      </div>
+
+      <div class="">
+        {{order.Billto}}
       </div>
 
       <div class="">
         <input type="text" v-model="order.version" disabled>
         <input type="text" v-model="order.createdAt" disabled>
         <input type="text" v-model="order.updatedAt" disabled>
-        <input type="text" v-model="order.UserId" disabled>
+      </div>
+      <div class="" v-if="order.UserId">
         {{order.User}}
       </div>
 
@@ -46,9 +62,12 @@
 </template>
 
 <script>
-import API from '@/service'
+import OrdersAPI from '@/service/orders'
+import accountPicker from './account/Picker'
 export default {
   name: 'Order',
+
+  components: {accountPicker},
 
   data () {
     return {
@@ -68,13 +87,14 @@ export default {
 
     init () {
       this.toggleLoading();
-      API
+      OrdersAPI
         .getInitOrder()
         .then(data => {
           this.order = data;
+          this.order.UserId = this.$store.getters.getUser.id;
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = OrdersAPI.handleError(error);
         })
         .then(()=>{
           this.toggleLoading();
@@ -83,13 +103,13 @@ export default {
 
     read (id) {
       this.toggleLoading();
-      API
+      OrdersAPI
        .getOrder(id)
        .then(data => {
          this.order = data;
        })
        .catch(error => {
-         this.error = API.handleError(error);
+         this.error = OrdersAPI.handleError(error);
        })
        .then(()=>{
          this.toggleLoading();
@@ -98,13 +118,13 @@ export default {
 
     save () {
       this.toggleLoading();
-      API
-        .saveOrder(this.order,this.$store.getters.getUser)
+      OrdersAPI
+        .saveOrder(this.order)
         .then(data => {
           this.order = data;
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = OrdersAPI.handleError(error);
         })
         .then(()=>{
           this.toggleLoading();
@@ -113,17 +133,27 @@ export default {
 
     remove () {
       this.toggleLoading();
-      API
+      OrdersAPI
         .removeOrder(this.order)
         .then(data => {
           this.$router.push({name: 'orders'});
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = OrdersAPI.handleError(error);
         })
         .then(()=>{
           this.toggleLoading();
         });
+    },
+
+    setAccount (account) {
+      this.order.AccountId = account.id;
+      this.order.Account = account;
+      console.log('setaccount',this.order.AccountId,this.order.Account);
+    },
+    unsetAccount (account) {
+      this.order.AccountId = null;
+      this.order.Account = null;
     },
 
     add() {
