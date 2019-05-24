@@ -5,7 +5,7 @@
     </div>
     <div class="" v-else>
       <h3>ACCOUNT</h3>
-      <h1> {{account.description}}</h1>
+      <h1>{{account.description}}</h1>
       <div class="">
         <button type="button" v-on:click="save()">save</button>
         <button type="button" v-on:click="remove()" v-if="(account.id)">delete</button>

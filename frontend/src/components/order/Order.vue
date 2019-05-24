@@ -24,24 +24,27 @@
         <input type="text" v-model="order.id" disabled>
         <input type="text" v-model="order.order_status" disabled>
         <input type="text" v-model="order.order_date" disabled>
-      </div>
-
-      <div class="">
         <input type="text" v-model="order.order_num" autofocus>
       </div>
 
       <div class="">
         {{order.Account}}
+        <!-- <accountPicker v-on:picked="setAccount" v-bind:id="order.AccountId"/> -->
         <accountPicker v-on:picked="setAccount"/>
         <button type="button" v-on:click="unsetAccount">X</button>
       </div>
 
       <div class="">
         {{order.Shipto}}
+        <!-- <accountPicker v-on:picked="setShipto" v-bind:id="order.ShiptoId"/> -->
+        <accountPicker v-on:picked="setShipto"/>
+        <button type="button" v-on:click="unsetShipto">X</button>
       </div>
 
       <div class="">
         {{order.Billto}}
+        <accountPicker v-on:picked="setBillto"/>
+        <button type="button" v-on:click="unsetBillto">X</button>
       </div>
 
       <div class="">
@@ -53,17 +56,20 @@
         {{order.User}}
       </div>
 
-      <button type="button" v-on:click="add()">add</button>
-      <div class="" v-for="item in order.items" v-on:click="edit(item)">
-        {{item}}
+      <div class="">
+        <h3>ITEMS</h3>
+        <button type="button" v-on:click="add()">add</button>
+        <div class="" v-for="item in items" v-on:click="edit(item)">
+          {{item}}
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import OrdersAPI from '@/service/orders'
-import accountPicker from './account/Picker'
+import API from '@/service/orders'
+import accountPicker from '../account/Picker'
 export default {
   name: 'Order',
 
@@ -73,6 +79,7 @@ export default {
     return {
       error: null,
       order: {},
+      items: {},
       loading: false,
     }
   },
@@ -87,14 +94,14 @@ export default {
 
     init () {
       this.toggleLoading();
-      OrdersAPI
+      API
         .getInitOrder()
         .then(data => {
           this.order = data;
           this.order.UserId = this.$store.getters.getUser.id;
         })
         .catch(error => {
-          this.error = OrdersAPI.handleError(error);
+          this.error = API.handleError(error);
         })
         .then(()=>{
           this.toggleLoading();
@@ -103,13 +110,29 @@ export default {
 
     read (id) {
       this.toggleLoading();
-      OrdersAPI
+      API
        .getOrder(id)
        .then(data => {
          this.order = data;
+         this.readItems();
        })
        .catch(error => {
-         this.error = OrdersAPI.handleError(error);
+         this.error = API.handleError(error);
+       })
+       .then(()=>{
+         this.toggleLoading();
+       });
+    },
+
+    readItems () {
+      this.toggleLoading();
+      API
+       .getItems(this.order.id)
+       .then(data => {
+         this.items = data;
+       })
+       .catch(error => {
+         this.error = API.handleError(error);
        })
        .then(()=>{
          this.toggleLoading();
@@ -118,13 +141,14 @@ export default {
 
     save () {
       this.toggleLoading();
-      OrdersAPI
+      API
         .saveOrder(this.order)
         .then(data => {
           this.order = data;
+          // this.read(data.id);
         })
         .catch(error => {
-          this.error = OrdersAPI.handleError(error);
+          this.error = API.handleError(error);
         })
         .then(()=>{
           this.toggleLoading();
@@ -133,13 +157,13 @@ export default {
 
     remove () {
       this.toggleLoading();
-      OrdersAPI
+      API
         .removeOrder(this.order)
         .then(data => {
           this.$router.push({name: 'orders'});
         })
         .catch(error => {
-          this.error = OrdersAPI.handleError(error);
+          this.error = API.handleError(error);
         })
         .then(()=>{
           this.toggleLoading();
@@ -149,11 +173,32 @@ export default {
     setAccount (account) {
       this.order.AccountId = account.id;
       this.order.Account = account;
-      console.log('setaccount',this.order.AccountId,this.order.Account);
+      this.$forceUpdate();
     },
-    unsetAccount (account) {
+    unsetAccount () {
       this.order.AccountId = null;
       this.order.Account = null;
+      this.$forceUpdate();
+    },
+    setShipto (account) {
+      this.order.ShiptoId = account.id;
+      this.order.Shipto = account;
+      this.$forceUpdate();
+    },
+    unsetShipto () {
+      this.order.ShiptoId = null;
+      this.order.Shipto = null;
+      this.$forceUpdate();
+    },
+    setBillto (account,id,obj) {
+      this.order.BilltoId = account.id;
+      this.order.Billto = account;
+      this.$forceUpdate();
+    },
+    unsetBillto (id,obj) {
+      this.order.BilltoId = null;
+      this.order.Billto = null;
+      this.$forceUpdate();
     },
 
     add() {

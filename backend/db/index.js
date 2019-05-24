@@ -13,11 +13,13 @@ db
     const User = require('./user');
     const Account = require('./account');
     const Order = require('./order');
+    const Orderitem = require('./orderitem');
     Account.belongsTo(User);
     Order.belongsTo(User);
-    Order.belongsTo(Account);/*, { as: 'account', foreignKey: 'account_id', constraints: false }*/
+    Order.belongsTo(Account, {foreignKey: {allowNull: false}});/*, { as: 'account', foreignKey: 'account_id', constraints: false }*/
     Order.belongsTo(Account, {as: 'Shipto'});
     Order.belongsTo(Account, {as: 'Billto'});
+    Orderitem.belongsTo(Order, {onDelete:'CASCADE'});
     db.sync();
     console.log('Database synchronized successfully.');
   })

@@ -47,7 +47,7 @@ router.get('/order/:id',(req,res) => {
           { model: db.models.User},
           { model: db.models.Account},
           { model: db.models.Account, as: 'Shipto' },
-          { model: db.models.Account, as: 'Billto' }
+          { model: db.models.Account, as: 'Billto' },
         ]}
       )
     .then(order => {
@@ -59,15 +59,30 @@ router.get('/order/:id',(req,res) => {
 });
 
 router.post('/order',(req,res) => {
-  console.log('*************************************************post',req.body);
   db.models.Order
   .create(req.body)
   .then((order) => {
     order.setUser(req.body.UserId);
     order.setAccount(req.body.AccountId);
     order.setShipto(req.body.ShiptoId);
-    order.setBillto(req.body.Billtoid);
-    res.send(order);
+    order.setBillto(req.body.BilltoId);
+    // res.send(order);
+    db.models.Order
+      .findByPk(
+        order.id,
+        { include: [
+            { model: db.models.User},
+            { model: db.models.Account},
+            { model: db.models.Account, as: 'Shipto' },
+            { model: db.models.Account, as: 'Billto' },
+          ]}
+        )
+      .then(order => {
+        res.send(order);
+      })
+      .catch(error => {
+        res.send(error);
+      });
   })
   .catch(error => {
     res.send(error);
@@ -75,18 +90,34 @@ router.post('/order',(req,res) => {
 });
 
 router.put('/order',(req,res) => {
-  console.log('++++++++++++++++++++++++++++++++++++++++++++++++++put',req.body);
   db.models.Order
     .update(req.body,{where:{id:req.body.id}})
     .then(() => {
-      order.setUser(req.body.UserId);
-      order.setAccount(req.body.AccountId);
-      order.setShipto(req.body.ShiptoId);
-      order.setBillto(req.body.Billtoid);
       db.models.Order
       .findByPk(req.body.id)
       .then(order => {
-        res.send(order);
+        order.setUser(req.body.UserId);
+        order.setAccount(req.body.AccountId);
+        order.setShipto(req.body.ShiptoId);
+        order.setBillto(req.body.BilltoId);
+        // order.save();
+        // res.send(order);
+        db.models.Order
+          .findByPk(
+            order.id,
+            { include: [
+                { model: db.models.User},
+                { model: db.models.Account},
+                { model: db.models.Account, as: 'Shipto' },
+                { model: db.models.Account, as: 'Billto' },
+              ]}
+            )
+          .then(order => {
+            res.send(order);
+          })
+          .catch(error => {
+            res.send(error);
+          });
       })
     })
     .catch(error => {

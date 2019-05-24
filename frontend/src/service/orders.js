@@ -30,7 +30,6 @@ export default {
    },
 
  saveOrder (order) {
-   console.log('save order',order);
    if (order.id) {
      return Axios
      .put('/order',order)
@@ -67,4 +66,59 @@ export default {
          return response.data;
        })
    },
+
+   getItems (orderid,page = 0) {
+     console.log('getitems',orderid);
+    return Axios
+      .get('/order/'+orderid+'/items/'+page)
+      .then(response => {
+        return response.data;
+      })
+    },
+
+   getInitItem () {
+    return Axios
+      .get('/orderitem')
+      .then(response => {
+        return response.data;
+      })
+    },
+
+    getItem (id) {
+     return Axios
+       .get('/orderitem/'+id)
+       .then(response => {
+         return response.data;
+       })
+     },
+
+     saveItem (item) {
+       if (item.id) {
+         return Axios
+         .put('/orderitem',item)
+         .then(response => {
+           return response.data;
+         })
+         .catch(error => {
+           return error;
+         });
+       } else {
+         return Axios
+         .post('/orderitem',item)
+         .then(response => {
+           return response.data;
+         })
+         .catch(error => {
+           return error;
+         });
+       }
+      },
+
+      removeItem (item) {
+        return Axios
+          .delete('/orderitem',{ data: item })
+          .then(response => {
+            return response.data;
+          })
+      },
 }
