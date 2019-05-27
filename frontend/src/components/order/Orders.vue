@@ -64,7 +64,7 @@ export default {
     },
 
     edit (order) {
-      this.$router.push({name: 'orderedit', params:{id:order.id}});
+      this.$router.push({name: 'orderedit', params:{orderid:order.id}});
     },
 
     exit () {

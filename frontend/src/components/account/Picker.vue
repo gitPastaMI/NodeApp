@@ -1,13 +1,14 @@
 <template>
   <span class="pickerComponent">
-    <button type="button" v-if="!showModal" v-on:click="showModal = true">S</button>
+    <button type="button" v-if="!showModal" v-on:click="show(true)">S</button>
+    <button type="button" v-if="!showModal" v-on:click="pick()">U</button>
     <div class="modal" v-if="showModal">
       <div class="modal-content">
         <div class="" v-if="isLoading()">
           <h1>Loading...</h1>
         </div>
         <div class="" v-else>
-          <button type="button" class="close" v-on:click="showModal = false">X</button>
+          <button type="button" class="close" v-on:click="show(false)">X</button>
           <h1>PICKER</h1>
           <input type="text" v-model="filter" placeholder="Insert text to find ..." autofocus size="50">
           <button type="button" v-on:click="search()">Search</button>
@@ -45,6 +46,9 @@ export default {
     init () {
       this.filter = null;
       this.items = null;
+    },
+    show (value) {
+      this.showModal = value;
     },
     search () {
       this.toggleLoading();

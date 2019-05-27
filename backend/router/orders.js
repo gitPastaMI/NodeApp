@@ -17,6 +17,9 @@ router.get('/orders/:page',(req,res) => {
           res.send(orders.rows);
         }
       })
+      .catch(error => {
+        res.send(error);
+      });
   } else {
     const PAGESIZE = 10;
     db.models.Order
@@ -26,12 +29,15 @@ router.get('/orders/:page',(req,res) => {
         limit: ((req.params.page -1) * PAGESIZE) + PAGESIZE,
       })
       .then(orders => {
-          if (orders.length===0) {
-            res.status(418).send('No orders found');
-          } else {
-            res.send(orders);
-          }
-        })
+        if (orders.length===0) {
+          res.status(418).send('No orders found');
+        } else {
+          res.send(orders);
+        }
+      })
+      .catch(error => {
+        res.send(error);
+      });
   }
 });
 
@@ -132,8 +138,11 @@ router.delete('/order',(req,res) => {
       order.destroy()
       .then(() => {
         res.send('success');
-      });
-    })
+      })
+     })
+    .catch(error => {
+      res.send(error);
+    });
 });
 
 module.exports = router;

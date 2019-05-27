@@ -6,19 +6,15 @@ const db = require('../db');
 // http://docs.sequelizejs.com/class/lib/model.js~Model.html
 // *****************************************************************************
 router.get('/order/:orderid/items/:page',(req,res) => {
-  console.log('orderitems',req.params);
   if (req.params.page==0) {
     db.models.Orderitem
-      .findAndCountAll({
+      .findAll({
         order:[['createdAt', 'DESC']],
         where:{OrderId:req.params.orderid}
       })
-      .then(item => {
-        if (items.count===0) {
-          res.status(418).send('No items found');
-        } else {
-          res.send(items.rows);
-        }
+      .then(items => {
+        console.log('backend rows',items.length);
+        res.send(items);
       })
   } else {
     const PAGESIZE = 10;
@@ -32,114 +28,100 @@ router.get('/order/:orderid/items/:page',(req,res) => {
           if (items.length===0) {
             res.status(418).send('No items found');
           } else {
-            res.send(items  );
+            res.send(items);
           }
         })
   }
 });
 
-router.get('/order/item',(req,res) => {
-  res.send(db.models.Orderitem.build());
+router.get('/orderitem',(req,res) => {
+  console.log('++++++++++++++++++++++++++++++++++++++++++');
+  const i = db.models.Orderitem.build();
+  console.log(i);
+  console.log('++++++++++++++++++++++++++++++++++++++++++');
+  res.send(i);
 });
-//
-// router.get('/order/:id',(req,res) => {
-//   db.models.Order
-//     .findByPk(
-//       req.params.id,
-//       { include: [
-//           { model: db.models.User},
-//           { model: db.models.Account},
-//           { model: db.models.Account, as: 'Shipto' },
-//           { model: db.models.Account, as: 'Billto' },
-//           { model: db.models.Orderitem},
-//         ]}
-//       )
-//     .then(order => {
-//       res.send(order);
-//     })
-//     .catch(error => {
-//       res.send(error);
-//     });
-// });
-//
-// router.post('/order',(req,res) => {
-//   db.models.Order
-//   .create(req.body)
-//   .then((order) => {
-//     order.setUser(req.body.UserId);
-//     order.setAccount(req.body.AccountId);
-//     order.setShipto(req.body.ShiptoId);
-//     order.setBillto(req.body.BilltoId);
-//     // res.send(order);
-//     db.models.Order
-//       .findByPk(
-//         order.id,
-//         { include: [
-//             { model: db.models.User},
-//             { model: db.models.Account},
-//             { model: db.models.Account, as: 'Shipto' },
-//             { model: db.models.Account, as: 'Billto' },
-//             { model: db.models.Orderitem},
-//           ]}
-//         )
-//       .then(order => {
-//         res.send(order);
-//       })
-//       .catch(error => {
-//         res.send(error);
-//       });
-//   })
-//   .catch(error => {
-//     res.send(error);
-//   });
-// });
-//
-// router.put('/order',(req,res) => {
-//   db.models.Order
-//     .update(req.body,{where:{id:req.body.id}})
-//     .then(() => {
-//       db.models.Order
-//       .findByPk(req.body.id)
-//       .then(order => {
-//         order.setUser(req.body.UserId);
-//         order.setAccount(req.body.AccountId);
-//         order.setShipto(req.body.ShiptoId);
-//         order.setBillto(req.body.BilltoId);
-//         // order.save();
-//         // res.send(order);
-//         db.models.Order
-//           .findByPk(
-//             order.id,
-//             { include: [
-//                 { model: db.models.User},
-//                 { model: db.models.Account},
-//                 { model: db.models.Account, as: 'Shipto' },
-//                 { model: db.models.Account, as: 'Billto' },
-//                 { model: db.models.Orderitem},
-//               ]}
-//             )
-//           .then(order => {
-//             res.send(order);
-//           })
-//           .catch(error => {
-//             res.send(error);
-//           });
-//       })
-//     })
-//     .catch(error => {
-//       res.send(error);
-//     });
-// });
-//
-// router.delete('/order',(req,res) => {
-//   db.models.Order
-//     .findByPk(req.body.id)
-//     .then(order => {
-//       order.destroy()
-//       .then(() => {
-//         res.send('success');
-//       });
-//     })
-// });
+
+ router.get('/orderitem/:id',(req,res) => {
+   db.models.Orderitem
+     .findByPk(
+       req.params.id,
+       { include: [
+           { model: db.models.User}
+         ]}
+       )
+     .then(item => {
+       res.send(item);
+     })
+     .catch(error => {
+       res.send(error);
+     });
+ });
+
+ router.post('/orderitem',(req,res) => {
+   console.log('zxzxzxzxzxzxzxzxzxzxzxzx A');
+   db.models.Orderitem
+   .create(req.body)
+   .then((item) => {
+     console.log('zxzxzxzxzxzxzxzxzxzxzxzx B',item);
+     item.setUser(req.body.UserId);
+     db.models.Orderitem
+       .findByPk(
+         item.id,
+         { include: [
+             { model: db.models.User}
+           ]}
+         )
+       .then(item => {
+         console.log('zxzxzxzxzxzxzxzxzxzxzxzx C',item);
+         res.send(item);
+       })
+       .catch(error => {
+         res.send(error);
+       });
+     })
+     .catch(error => {
+       res.send(error);
+    });
+ });
+
+ router.put('/orderitem',(req,res) => {
+   db.models.Orderitem
+     .update(req.body,{where:{id:req.body.id}})
+     .then(() => {
+       db.models.Orderitem
+       .findByPk(req.body.id)
+       .then(item => {
+         item.setUser(req.body.UserId);
+         db.models.Orderitem
+           .findByPk(
+             item.id,
+             { include: [
+                 { model: db.models.User},
+               ]}
+             )
+           .then(item => {
+             res.send(item);
+           })
+           .catch(error => {
+             res.send(error);
+           });
+       })
+     })
+     .catch(error => {
+       res.send(error);
+     });
+ });
+
+ router.delete('/orderitem',(req,res) => {
+   db.models.Orderitem
+     .findByPk(req.body.id)
+     .then(item => {
+       item.destroy()
+       .then(() => {
+         res.send('success');
+       });
+     })
+ });
 
 module.exports = router;

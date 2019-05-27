@@ -19,7 +19,9 @@ db
     Order.belongsTo(Account, {foreignKey: {allowNull: false}});/*, { as: 'account', foreignKey: 'account_id', constraints: false }*/
     Order.belongsTo(Account, {as: 'Shipto'});
     Order.belongsTo(Account, {as: 'Billto'});
+    Orderitem.belongsTo(User);
     Orderitem.belongsTo(Order, {onDelete:'CASCADE'});
+    // Orderitem.sync({force:true});
     db.sync();
     console.log('Database synchronized successfully.');
   })

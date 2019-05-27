@@ -5,7 +5,6 @@
     </div>
     <div class="" v-else>
       <h3>ORDER</h3>
-      <h1>{{order.order_num}}</h1>
       <div class="">
         <button type="button" v-on:click="save()">save</button>
         <button type="button" v-on:click="remove()" v-if="(order.id)">delete</button>
@@ -29,22 +28,17 @@
 
       <div class="">
         {{order.Account}}
-        <!-- <accountPicker v-on:picked="setAccount" v-bind:id="order.AccountId"/> -->
-        <accountPicker v-on:picked="setAccount"/>
-        <button type="button" v-on:click="unsetAccount">X</button>
+        <accountpicker v-on:picked="pickAccount"/>
       </div>
 
       <div class="">
         {{order.Shipto}}
-        <!-- <accountPicker v-on:picked="setShipto" v-bind:id="order.ShiptoId"/> -->
-        <accountPicker v-on:picked="setShipto"/>
-        <button type="button" v-on:click="unsetShipto">X</button>
+        <accountpicker v-on:picked="pickShipto"/>
       </div>
 
       <div class="">
         {{order.Billto}}
-        <accountPicker v-on:picked="setBillto"/>
-        <button type="button" v-on:click="unsetBillto">X</button>
+        <accountpicker v-on:picked="pickBillto"/>
       </div>
 
       <div class="">
@@ -56,29 +50,35 @@
         {{order.User}}
       </div>
 
-      <div class="">
-        <h3>ITEMS</h3>
-        <button type="button" v-on:click="add()">add</button>
-        <div class="" v-for="item in items" v-on:click="edit(item)">
-          {{item}}
-        </div>
+      <h3>ITEMS</h3>
+      <!--<modalitem  v-bind:parent="order.id"/>-->
+      <router-view v-on:needrefresh="readitems(order.id)"/>
+      <button type="button" v-on:click="add()">+</button>
+      <div class="" v-if="items.length === 0">
+        No items found
       </div>
+      <div class="" v-else v-for="item in items" v-on:click="edit(item.id)">
+        {{item}}
+      </div>
+
     </div>
   </div>
 </template>
 
 <script>
 import API from '@/service/orders'
-import accountPicker from '../account/Picker'
+import accountpicker from '../account/Picker'
+//import modalitem from './ItemModal'
 export default {
   name: 'Order',
 
-  components: {accountPicker},
+  components: {accountpicker},
 
   data () {
     return {
       error: null,
       order: {},
+      //itemdetail: {},
       items: {},
       loading: false,
     }
@@ -114,7 +114,7 @@ export default {
        .getOrder(id)
        .then(data => {
          this.order = data;
-         this.readItems();
+         this.readitems(this.order.id);
        })
        .catch(error => {
          this.error = API.handleError(error);
@@ -124,12 +124,14 @@ export default {
        });
     },
 
-    readItems () {
+    readitems (orderid) {
       this.toggleLoading();
       API
-       .getItems(this.order.id)
+       .getItems(orderid)
        .then(data => {
-         this.items = data;
+         if (data.length!==0) {
+           this.items = data;
+         }
        })
        .catch(error => {
          this.error = API.handleError(error);
@@ -145,7 +147,6 @@ export default {
         .saveOrder(this.order)
         .then(data => {
           this.order = data;
-          // this.read(data.id);
         })
         .catch(error => {
           this.error = API.handleError(error);
@@ -170,47 +171,29 @@ export default {
         });
     },
 
-    setAccount (account) {
-      this.order.AccountId = account.id;
-      this.order.Account = account;
-      this.$forceUpdate();
-    },
-    unsetAccount () {
-      this.order.AccountId = null;
-      this.order.Account = null;
-      this.$forceUpdate();
-    },
-    setShipto (account) {
-      this.order.ShiptoId = account.id;
-      this.order.Shipto = account;
-      this.$forceUpdate();
-    },
-    unsetShipto () {
-      this.order.ShiptoId = null;
-      this.order.Shipto = null;
-      this.$forceUpdate();
-    },
-    setBillto (account,id,obj) {
-      this.order.BilltoId = account.id;
-      this.order.Billto = account;
-      this.$forceUpdate();
-    },
-    unsetBillto (id,obj) {
-      this.order.BilltoId = null;
-      this.order.Billto = null;
+    pickAccount (account) {
+      this.order.AccountId = (account===undefined)?null:account.id;
+      this.order.Account = (account===undefined)?null:account;
       this.$forceUpdate();
     },
 
-    add() {
-      this.toggleLoading();
-      console.log('add');
-      this.toggleLoading();
+    pickShipto (account) {
+      this.order.ShiptoId = (account===undefined)?null:account.id;
+      this.order.Shipto = (account===undefined)?null:account;
+      this.$forceUpdate();
     },
 
-    edit() {
-      this.toggleLoading();
-      console.log('edit');
-      this.toggleLoading();
+    pickBillto (account) {
+      this.order.BilltoId = (account===undefined)?null:account.id;
+      this.order.Billto = (account===undefined)?null:account;
+      this.$forceUpdate();
+    },
+
+    add () {
+      this.$router.push({name: 'orderitemnew'});
+    },
+    edit (id) {
+      this.$router.push({name: 'orderitemedit', params: {itemid: id}});
     },
 
     exit () {
@@ -220,7 +203,7 @@ export default {
   },
 
   mounted () {
-    (!this.$route.params.id)?this.init():this.read(this.$route.params.id);
+    (!this.$route.params.orderid)?this.init():this.read(this.$route.params.orderid);
   },
 
 }

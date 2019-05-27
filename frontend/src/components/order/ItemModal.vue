@@ -1,6 +1,6 @@
 <template>
-  <div class="orderItemComponent">
-    <button type="button" v-if="!showModal" v-on:click="showModal = true">S</button>
+  <div class="">
+    <!--<button type="button" v-if="!showModal" v-on:click="showModal = true">{{label}}</button>-->
     <div class="modal" v-if="showModal">
       <div class="modal-content">
 
@@ -8,7 +8,7 @@
           <h1>Loading...</h1>
         </div>
         <div class="" v-else>
-          <h1>ITEM</h1>
+          <h3>ITEM</h3>
           <div class="">
             <button type="button" v-on:click="save()">save</button>
             <button type="button" v-on:click="remove()" v-if="(item.id)">delete</button>
@@ -30,10 +30,19 @@
             <input type="text" v-model="item.status" disabled>
           </div>
           <div class="">
-            <input type="text" v-model="item.description" autofocus>
+            <input type="text" v-model="item.description" autofocus placeholder="description">
           </div>
           <div class="">
-            <input type="text" v-model="item.qty">
+            <input type="text" v-model="item.qty" placeholder="qty">
+          </div>
+          <div class="">
+            <input type="text" v-model="item.unit_price" placeholder="unit_price">
+          </div>
+          <div class="">
+            <input type="text" v-model="item.total_price" disabled>
+          </div>
+          <div class="">
+            <input type="text" v-model="total_price" disabled>
           </div>
 
           <div class="">
@@ -41,6 +50,7 @@
             <input type="text" v-model="item.createdAt" disabled>
             <input type="text" v-model="item.updatedAt" disabled>
             <input type="text" v-model="item.UserId" disabled>
+            <input type="text" v-model="item.OrderId" disabled>
           </div>
 
           <div class="">
@@ -56,16 +66,20 @@
 <script>
 import API from '@/service/orders'
 export default {
-  name: 'OrderItems',
-
-  props: ['callerRoute'],
+  name: 'ModalItem',
 
   data () {
     return {
-      showModal: false,
-      error: null,
+      showModal: true,
       item: {},
+      error: null,
       loading: false,
+    }
+  },
+
+  computed: {
+    total_price: () => {
+      return this.item?this.item.qty * this.item.unitprice:0;
     }
   },
 
@@ -84,6 +98,7 @@ export default {
         .then(data => {
           this.item = data;
           this.item.UserId = this.$store.getters.getUser.id;
+          this.item.OrderId = this.$route.params.orderid;
         })
         .catch(error => {
           this.error = API.handleError(error);
@@ -93,10 +108,10 @@ export default {
         });
     },
 
-    read (id) {
+    read () {
       this.toggleLoading();
       API
-       .getItem(id)
+       .getItem(this.$route.params.itemid)
        .then(data => {
          this.item = data;
        })
@@ -124,11 +139,13 @@ export default {
     },
 
     remove () {
+      console.log('modalitem remove');
       this.toggleLoading();
       API
-        .removeItem(this.order)
+        .removeItem(this.item)
         .then(data => {
-          this.$router.push(this.callerRoute);
+          console.log('modalitem remove data',data);
+          this.exit();
         })
         .catch(error => {
           this.error = API.handleError(error);
@@ -139,13 +156,14 @@ export default {
     },
 
     exit () {
-      this.$router.push(this.callerRoute);
+      this.$router.push({name: 'orderedit', params: {id:this.parent}});
+      this.$emit('needrefresh');
     },
 
   },
 
   mounted () {
-    (!this.$route.params.id)?this.init():this.read(this.$route.params.id);
+    (!this.$route.params.itemid)?this.init():this.read();
   },
 
 }
@@ -164,8 +182,8 @@ export default {
 }
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
+  margin: 10% auto; /* 15% from the top and centered */
+  padding: 15px;
   border: 1px solid #888;
   width: 50%; /* Could be more or less, depending on screen size */
 }
