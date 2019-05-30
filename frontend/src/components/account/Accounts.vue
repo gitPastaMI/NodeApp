@@ -5,14 +5,16 @@
     </div>
     <div class="" v-else>
       <div class="">
-        <h3>ORDERS</h3>
+        <h3>ACCOUNTS</h3>
+        <input type="text" v-model="filter" placeholder="Insert text to find ..." autofocus size="50">
+        <button type="button" v-on:click="search()">search</button>
         <button type="button" v-on:click="add()">add</button>
         <button type="button" v-on:click="exit()">exit</button>
         <error v-bind:errors="error"/>
       </div>
 
-      <div class="" v-for="order in orders" v-on:click="edit(order)">
-        {{order}}
+      <div class="" v-for="account in accounts" v-on:click="edit(account)">
+        {{account}}
       </div>
     </div>
 
@@ -20,16 +22,17 @@
 </template>
 
 <script>
-import API from '@/service/orders'
+import API from '@/service/accounts'
 import error from '@/components/Error'
 export default {
-  name: 'Orders',
+  name: 'Accounts',
   components:{error},
   data () {
     return {
-      error: null,
-      orders: null,
       loading: false,
+      error: null,
+      accounts: null,
+      filter: null,
     }
   },
 
@@ -44,9 +47,9 @@ export default {
     read () {
       this.toggleLoading();
       API
-        .getOrders()
+        .getAccounts()
         .then(data => {
-          (data.errors)?this.error = data.errors:this.orders = data;
+          (data.errors)?this.error = data.errors:this.accounts = data;
         })
         .catch(error => {
           this.error = error;
@@ -56,12 +59,31 @@ export default {
         });
     },
 
-    add () {
-      this.$router.push({name: 'ordernew'});
+    search () {
+      if (this.filter) {
+        this.toggleLoading();
+        API
+        .search(this.filter)
+        .then(data => {
+          (data.errors)?this.error = data.errors:this.accounts = data;
+        })
+        .catch(error => {
+          this.error = error;
+        })
+        .then(()=>{
+          this.toggleLoading();
+        });
+      } else {
+        this.read();
+      }
     },
 
-    edit (order) {
-      this.$router.push({name: 'orderedit', params:{orderid:order.id}});
+    add () {
+      this.$router.push({name: 'accountnew'});
+    },
+
+    edit (account) {
+      this.$router.push({name: 'accountedit', params:{accountid:account.id}});
     },
 
     exit () {

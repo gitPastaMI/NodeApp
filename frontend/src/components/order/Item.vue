@@ -8,49 +8,46 @@
           <h1>Loading...</h1>
         </div>
         <div class="" v-else>
-          <h3>ITEM</h3>
-          <div class="">
-            <button type="button" v-on:click="save()">save</button>
-            <button type="button" v-on:click="remove()" v-if="(item.id)">delete</button>
-            <button type="button" v-on:click="exit()">exit</button>
-          </div>
-
-          <div class="">
-            {{error}}
-          </div>
 
           <div class="">
             {{item}}
           </div>
 
           <div class="">
-            <input type="text" v-model="item.id" disabled>
-          </div>
-          <div class="">
-            <input type="text" v-model="item.status" disabled>
-          </div>
-          <div class="">
-            <input type="text" v-model="item.description" autofocus placeholder="description">
-          </div>
-          <div class="">
-            <input type="text" v-model="item.qty" placeholder="qty">
-          </div>
-          <div class="">
-            <input type="text" v-model="item.unit_price" placeholder="unit_price">
-          </div>
-          <div class="">
-            <input type="text" v-model="item.total_price" disabled>
-          </div>
-          <div class="">
-            <input type="text" v-model="total_price" disabled>
+            <h3>ITEM</h3>
+            <button type="button" v-on:click="save()">save</button>
+            <button type="button" v-on:click="remove()" v-if="(item.id)">delete</button>
+            <button type="button" v-on:click="exit()">exit</button>
+            <error v-bind:errors="error"/>
           </div>
 
           <div class="">
-            <input type="text" v-model="item.version" disabled>
-            <input type="text" v-model="item.createdAt" disabled>
-            <input type="text" v-model="item.updatedAt" disabled>
-            <input type="text" v-model="item.UserId" disabled>
-            <input type="text" v-model="item.OrderId" disabled>
+            <input type="text" v-model="item.id" disabled>
+            <input type="text" v-model="item.status" disabled>
+          </div>
+          <div class="">
+            <input type="text" v-model="item.description" autofocus>
+            <input type="text" v-model="item.qty" v-on:change="totalPrice()">
+            <input type="text" v-model="item.unit_price" v-on:change="totalPrice()">
+            <input type="text" v-model="item.total_price" disabled>
+          </div>
+
+          <div class="">
+            <label for="">Version
+              <input type="text" v-model="item.version" disabled>
+            </label>
+            <label for="">Created
+              <input type="text" v-model="item.createdAt" disabled>
+            </label>
+            <label for="">Updated
+              <input type="text" v-model="item.updatedAt" disabled>
+            </label>
+            <label for="">Owner ID
+              <input type="text" v-model="item.UserId" disabled>
+            </label>
+            <label for="">Order ID
+              <input type="text" v-model="item.OrderId" disabled>
+            </label>
           </div>
 
           <div class="">
@@ -65,9 +62,10 @@
 
 <script>
 import API from '@/service/orders'
+import error from '@/components/Error'
 export default {
   name: 'ModalItem',
-
+  components:{error},
   data () {
     return {
       showModal: true,
@@ -77,13 +75,16 @@ export default {
     }
   },
 
-  computed: {
-    total_price: () => {
-      return this.item?this.item.qty * this.item.unitprice:0;
-    }
-  },
-
   methods:{
+    totalPrice () {
+      if (this.item) {
+        this.item.total_price = this.item.qty * this.item.unit_price;
+        this.$forceUpdate();
+        return this.item.total_price;
+      } else {
+        return 0;
+      }
+    },
     toggleLoading () {
       this.loading = !this.loading;
     },
@@ -96,12 +97,16 @@ export default {
       API
         .getInitItem()
         .then(data => {
-          this.item = data;
-          this.item.UserId = this.$store.getters.getUser.id;
-          this.item.OrderId = this.$route.params.orderid;
+          if (data.errors) {
+            this.error = data.errors;
+          } else {
+            this.item = data;
+            this.item.UserId = this.$store.getters.getUser.id;
+            this.item.OrderId = this.$route.params.orderid;
+          }
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -113,10 +118,10 @@ export default {
       API
        .getItem(this.$route.params.itemid)
        .then(data => {
-         this.item = data;
+         (data.errors)?this.error = data.errors:this.item = data;
        })
        .catch(error => {
-         this.error = API.handleError(error);
+         this.error = error;
        })
        .then(()=>{
          this.toggleLoading();
@@ -128,10 +133,10 @@ export default {
       API
         .saveItem(this.item)
         .then(data => {
-          this.item = data;
+           (data.errors)?this.error = data.errors:this.item = data;
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -139,16 +144,14 @@ export default {
     },
 
     remove () {
-      console.log('modalitem remove');
       this.toggleLoading();
       API
         .removeItem(this.item)
         .then(data => {
-          console.log('modalitem remove data',data);
           this.exit();
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -157,7 +160,7 @@ export default {
 
     exit () {
       this.$router.push({name: 'orderedit', params: {id:this.parent}});
-      this.$emit('needrefresh');
+      this.$emit('itemsaved');
     },
 
   },

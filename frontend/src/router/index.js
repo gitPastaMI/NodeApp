@@ -6,7 +6,8 @@ import Login from '@/components/Login'
 import Home from '@/components/Home'
 import Orders from '@/components/order/Orders'
 import Order from '@/components/order/Order'
-import OrderItem from '@/components/order/ItemModal'
+import OrderItem from '@/components/order/Item'
+import Accounts from '@/components/account/Accounts'
 import Account from '@/components/account/Account'
 
 Vue.use(Router)
@@ -24,8 +25,9 @@ const router = new Router({
         {path: 'item',            name: 'orderitemnew',   component: OrderItem, meta: {hasNavbar: false}},
         {path: 'item/:itemid',    name: 'orderitemedit',  component: OrderItem, meta: {hasNavbar: false}}
     ]},
-    {path: '/account',            name: 'accountnew',     component: Account,   props: true,  meta: {hasNavbar: false}},
-    {path: '/account/:accountid', name: 'accountedit',    component: Account,   props: true,  meta: {hasNavbar: false}},
+    {path: '/accounts',           name: 'accounts',       component: Accounts},
+    {path: '/account',            name: 'accountnew',     component: Account},
+    {path: '/account/:accountid', name: 'accountedit',    component: Account},
     {path: '*',  redirect: {name: 'login'}}
   ]
 })

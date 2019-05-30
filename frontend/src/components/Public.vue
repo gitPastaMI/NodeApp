@@ -1,5 +1,5 @@
 <template>
-  <div class="publicComponent">
+  <div class="">
     <h1>PUBLIC</h1>
   </div>
 </template>

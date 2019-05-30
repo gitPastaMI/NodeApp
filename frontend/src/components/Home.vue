@@ -1,9 +1,6 @@
 <template>
-  <div class="homeComponent">
+  <div class="">
     <h1>HOME</h1>
-    <div class="">
-      {{error}}
-    </div>
   </div>
 </template>
 
@@ -12,7 +9,6 @@ export default {
   name: 'Home',
   data () {
     return {
-      error: null,
     }
   },
 }

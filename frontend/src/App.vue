@@ -25,4 +25,11 @@ div {
   border: thin dotted;
   padding: 5px;
 }
+.formContainer {
+  display: grid;
+  grid-template-columns: 20% auto auto 20%;
+}
+.gridCentered {
+  grid-column-start: 2;
+}
 </style>

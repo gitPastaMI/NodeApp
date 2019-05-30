@@ -1,22 +1,19 @@
 <template>
-  <div class="orderComponent">
-    <div class="" v-if="isLoading()">
+  <div class="formContainer">
+    <div class="gridCenterd" v-if="isLoading()">
       <h1>Loading...</h1>
     </div>
-    <div class="" v-else>
-      <h3>ORDER</h3>
+    <div class="gridCenterd" v-else>
       <div class="">
+        {{order}}
+      </div>
+
+      <div class="">
+        <h3>ORDER</h3>
         <button type="button" v-on:click="save()">save</button>
         <button type="button" v-on:click="remove()" v-if="(order.id)">delete</button>
         <button type="button" v-on:click="exit()">exit</button>
-      </div>
-
-      <div class="">
-        {{error}}
-      </div>
-
-      <div class="">
-        {{order}}
+        <error v-bind:errors="error"/>
       </div>
 
       <div class="">
@@ -51,8 +48,7 @@
       </div>
 
       <h3>ITEMS</h3>
-      <!--<modalitem  v-bind:parent="order.id"/>-->
-      <router-view v-on:needrefresh="readitems(order.id)"/>
+      <router-view v-on:itemsaved="readitems(order.id)"/>
       <button type="button" v-on:click="add()">+</button>
       <div class="" v-if="items.length === 0">
         No items found
@@ -67,18 +63,17 @@
 
 <script>
 import API from '@/service/orders'
-import accountpicker from '../account/Picker'
-//import modalitem from './ItemModal'
+import accountpicker from '@/components/account/Picker'
+import error from '@/components/Error'
 export default {
   name: 'Order',
 
-  components: {accountpicker},
+  components: {accountpicker,error},
 
   data () {
     return {
       error: null,
       order: {},
-      //itemdetail: {},
       items: {},
       loading: false,
     }
@@ -97,11 +92,15 @@ export default {
       API
         .getInitOrder()
         .then(data => {
-          this.order = data;
-          this.order.UserId = this.$store.getters.getUser.id;
+          if (data.errors) {
+            this.error = data.errors;
+          } else {
+            this.order = data;
+            this.order.UserId = this.$store.getters.getUser.id;
+          }
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -113,11 +112,15 @@ export default {
       API
        .getOrder(id)
        .then(data => {
-         this.order = data;
-         this.readitems(this.order.id);
+         if (data.errors) {
+           this.error = data.errors;
+         } else {
+           this.order = data;
+           this.readitems(this.order.id);
+         }
        })
        .catch(error => {
-         this.error = API.handleError(error);
+         this.error = error;
        })
        .then(()=>{
          this.toggleLoading();
@@ -134,7 +137,7 @@ export default {
          }
        })
        .catch(error => {
-         this.error = API.handleError(error);
+         this.error = error;
        })
        .then(()=>{
          this.toggleLoading();
@@ -146,10 +149,10 @@ export default {
       API
         .saveOrder(this.order)
         .then(data => {
-          this.order = data;
+          (data.errors)?this.error = data.errors:this.order = data;
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -164,7 +167,7 @@ export default {
           this.$router.push({name: 'orders'});
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();

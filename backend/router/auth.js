@@ -2,19 +2,19 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-const User = require('../db/user');
+const db = require('../db');
 // *****************************************************************************
 // http://docs.sequelizejs.com/class/lib/model.js~Model.html
 // *****************************************************************************
 
 router.post('/auth/register',(req,res) => {
-  User.findOne({where:{username:req.body.username}})
+  db.models.User.findOne({where:{username:req.body.username}})
     .then(user => {
       if (!user) {
         bcrypt.hash(req.body.password, saltRounds)
         .then(hash => {
           req.body.password = hash;
-          User
+          db.models.User
           .create(req.body)
           .then(user => {
             res.send(user);
@@ -27,7 +27,7 @@ router.post('/auth/register',(req,res) => {
   });
 
 router.post('/auth/login',(req,res) => {
-  User.findOne({where:{username:req.body.username}})
+  db.models.User.findOne({where:{username:req.body.username}})
     .then(user => {
       if (user) {
         if (bcrypt.compareSync(req.body.password, user.password)) {
@@ -42,7 +42,7 @@ router.post('/auth/login',(req,res) => {
 });
 
 router.get('/users',(req,res) => {
-  User
+  db.models.User
     .findAll({order:[['createdAt', 'DESC']]})
     .then(users => {
       res.send(users);
@@ -50,7 +50,7 @@ router.get('/users',(req,res) => {
 });
 
 router.delete('/user',(req,res,next) => {
-  User
+  db.models.User
     .findByPk(req.body.id)
     .then(user => {
       user.destroy()

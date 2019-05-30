@@ -5,13 +5,16 @@ const Axios = axios.create({
   })
 
 export default {
-   handleError (error) {
-     if (error.response.status===418) {
-       return error.response.data;
-     } else {
-       return error;
-     }
-   },
+  getAccounts (page = 0) {
+  return Axios
+    .get('/accounts/'+page)
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      return error;
+    });
+  },
 
   getInitAccount () {
     return Axios
@@ -54,7 +57,7 @@ export default {
     },
 
     search (filter) {
-      return Axios.get('/account/picker/'+filter)
+      return Axios.get('/account/f/'+filter)
         .then(response => {
           return response.data;
         })

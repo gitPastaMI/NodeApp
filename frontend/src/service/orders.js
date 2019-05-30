@@ -5,14 +5,6 @@ const Axios = axios.create({
   })
 
 export default {
-   handleError (error) {
-     if (error.response.status===418) {
-       return error.response.data;
-     } else {
-       return error;
-     }
-   },
-
  getOrders (page = 0) {
   return Axios
     .get('/orders/'+page)
@@ -80,11 +72,9 @@ export default {
    },
 
   getItems (orderid,page = 0) {
-    console.log('getitems',orderid,page);
     return Axios
       .get('/order/'+orderid+'/items/'+page)
       .then(response => {
-        console.log('getitems response',response.data);
         return response.data;
       })
       .catch(error => {
@@ -93,11 +83,9 @@ export default {
   },
 
    getInitItem () {
-     console.log('service getinititem');
     return Axios
       .get('/orderitem')
       .then(response => {
-        console.log('service getInitItem',response.data);
         return response.data;
       })
       .catch(error => {
@@ -117,12 +105,10 @@ export default {
      },
 
      saveItem (item) {
-       console.log('service saveitem',item);
        if (item.id) {
          return Axios
          .put('/orderitem',item)
          .then(response => {
-           console.log('service saveitem PUT',response.data);
            return response.data;
          })
          .catch(error => {
@@ -132,7 +118,6 @@ export default {
          return Axios
          .post('/orderitem',item)
          .then(response => {
-           console.log('service saveitem POST',response.data);
            return response.data;
          })
          .catch(error => {

@@ -1,5 +1,5 @@
 <template>
-  <span class="pickerComponent">
+  <span class="">
     <button type="button" v-if="!showModal" v-on:click="show(true)">S</button>
     <button type="button" v-if="!showModal" v-on:click="pick()">U</button>
     <div class="modal" v-if="showModal">
@@ -10,6 +10,7 @@
         <div class="" v-else>
           <button type="button" class="close" v-on:click="show(false)">X</button>
           <h1>PICKER</h1>
+          <error v-bind:errors="error"/>
           <input type="text" v-model="filter" placeholder="Insert text to find ..." autofocus size="50">
           <button type="button" v-on:click="search()">Search</button>
           <div class="" v-for="item in items" v-on:click="pick(item)">
@@ -22,10 +23,11 @@
 </template>
 
 <script>
-import AccountAPI from '@/service/accounts'
+import API from '@/service/accounts'
+import error from '@/components/Error'
 export default {
   name: 'Picker',
-
+  components:{error},
   data () {
     return {
       showModal: false,
@@ -43,6 +45,7 @@ export default {
     isLoading () {
       return this.loading;
     },
+
     init () {
       this.filter = null;
       this.items = null;
@@ -52,13 +55,13 @@ export default {
     },
     search () {
       this.toggleLoading();
-      AccountAPI
+      API
        .search(this.filter)
        .then(data => {
-         this.items = data;
+        (data.errors)?this.error = data.errors:this.items = data;
        })
        .catch(error => {
-         this.error = AccountAPI.handleError(error);
+         this.error = error;
        })
        .then(()=>{
          this.toggleLoading();

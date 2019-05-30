@@ -1,5 +1,5 @@
 <template>
-  <div class="loginComponent">
+  <div class="">
     <div class="" v-if="isLoading()">
       <h1>Loading...</h1>
     </div>
@@ -8,14 +8,12 @@
       <div class="">
         <img src="../assets/logo.png">
       </div>
+      <error v-bind:errors="error"/>
       <div class="">
         <input type="text" v-model="credentials.username" autofocus>
         <input type="password" v-model="credentials.password">
         <button type="button" v-on:click="login()">Login</button>
         <button type="button" v-on:click="register()">Register</button>
-      </div>
-      <div class="">
-        {{error}}
       </div>
       <div class="">
         <div class="" v-for="user in users">
@@ -28,10 +26,11 @@
 </template>
 
 <script>
-// import API from '@/service'
 import API from '@/service/auth'
+import error from '@/components/Error'
 export default {
   name: 'Login',
+  components:{error},
   data () {
     return {
       credentials: {},
@@ -54,12 +53,15 @@ export default {
       API
         .register(this.credentials)
         .then(data => {
-            this.user = data;
-            this.read();
+            if (data.errors) {
+              this.error = data.errors;
+            } else {
+              this.user = data;
+              this.read();
+            }
           })
         .catch(error => {
-          this.error = API.handleError(error);
-          this.toggleLoading ();
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -77,7 +79,7 @@ export default {
             });
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -90,10 +92,10 @@ export default {
       API
         .getUsers()
         .then(data => {
-          this.users = data;
+          (data.errors)?this.error = data.errors:this.users = data;
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -105,10 +107,11 @@ export default {
       API
         .removeUser(user)
         .then(data => {
+          this.error = data.errors;
           this.read();
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -124,7 +127,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
 </style>

@@ -5,14 +5,6 @@ const Axios = axios.create({
   })
 
 export default {
-   handleError (error) {
-     if (error.response.status===418) {
-       return error.response.data;
-     } else {
-       return error;
-     }
-   },
-
   register (credentials) {
     return Axios
       .post('/auth/register',credentials)

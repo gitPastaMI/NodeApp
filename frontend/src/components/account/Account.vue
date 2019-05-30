@@ -1,35 +1,26 @@
 <template>
-  <div class="accountComponent">
-    <div class="" v-if="isLoading()">
+  <div class="formContainer">
+    <div class="gridCenterd" v-if="isLoading()">
       <h1>Loading...</h1>
     </div>
-    <div class="" v-else>
-      <h3>ACCOUNT</h3>
+    <div class="gridCentered shadowed" v-else>
+
       <div class="">
+        <h3>ACCOUNT</h3>
         <button type="button" v-on:click="save()">save</button>
         <button type="button" v-on:click="remove()" v-if="(account.id)">delete</button>
         <button type="button" v-on:click="exit()">exit</button>
-      </div>
-
-      <div class="">
-        {{error}}
-      </div>
-
-      <div class="">
-        {{account}}
+        <button type="button" v-on:click="getOrders()" v-if="account.id">orders</button>
+        <error v-bind:errors="error"/>
       </div>
 
       <div class="">
         <input type="text" v-model="account.id" disabled>
+        <input type="text" v-model="account.description" autofocus placeholder="description">
       </div>
       <div class="">
-        <input type="text" v-model="account.description" autofocus>
-      </div>
-      <div class="">
-        <input type="text" v-model="account.address">
-      </div>
-      <div class="">
-        <input type="text" v-model="account.location" >
+        <input type="text" v-model="account.address" placeholder="address">
+        <input type="text" v-model="account.location" placeholder="location">
       </div>
 
       <div class="">
@@ -43,16 +34,21 @@
         {{account.User}}
       </div>
 
+      <div class="">
+        {{account}}
+      </div>
+
     </div>
   </div>
 </template>
 
 <script>
 import API from '@/service/accounts'
+import error from '@/components/Error'
 export default {
   name: 'Account',
 
-  props: ['callerRoute'],
+  components:{error},
 
   data () {
     return {
@@ -75,11 +71,15 @@ export default {
       API
         .getInitAccount()
         .then(data => {
-          this.account = data;
-          this.account.UserId = this.$store.getters.getUser.id;
+          if (data.errors) {
+            this.error = data.errors;
+          } else {
+            this.account = data;
+            this.account.UserId = this.$store.getters.getUser.id;
+          }
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -91,10 +91,10 @@ export default {
       API
        .getAccount(id)
        .then(data => {
-         this.account = data;
+          (data.errors)?this.error = data.errors:this.account = data;
        })
        .catch(error => {
-         this.error = API.handleError(error);
+         this.error = error;
        })
        .then(()=>{
          this.toggleLoading();
@@ -106,10 +106,10 @@ export default {
       API
         .saveAccount(this.account)
         .then(data => {
-          this.account = data;
+          (data.errors)?this.error = data.errors:this.account = data;
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -119,12 +119,12 @@ export default {
     remove () {
       this.toggleLoading();
       API
-        .removeAccount(this.order)
+        .removeAccount(this.account)
         .then(data => {
           this.$router.push({name: 'accounts'});
         })
         .catch(error => {
-          this.error = API.handleError(error);
+          this.error = error;
         })
         .then(()=>{
           this.toggleLoading();
@@ -132,18 +132,26 @@ export default {
     },
 
     exit () {
-      this.$router.push(this.callerRoute);
+      this.$router.push({name: 'accounts'});
+    },
+
+    getOrders () {
+      console.log('account component getorders');
     },
 
   },
 
   mounted () {
-    (!this.$route.params.id)?this.init():this.read(this.$route.params.id);
+    (!this.$route.params.accountid)?this.init():this.read(this.$route.params.accountid);
   },
 
 }
 </script>
 
 <style scoped>
-
+.shadowed {
+  border:thin solid;
+  border-color: LightSeaGreen 	 	;
+  box-shadow: 15px 15px 5px  CadetBlue	 	;
+}
 </style>

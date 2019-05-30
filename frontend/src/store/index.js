@@ -7,8 +7,9 @@ export default new Vuex.Store({
   state: {
     user: null,
     navbarLinks: [
-        {key:1, label: 'Home',    route:{ name: 'home'}},
-        {key:2, label: 'Orders',  route:{ name: 'orders'}},
+        {key:1, label: 'Home',      route:{ name: 'home'}},
+        {key:2, label: 'Orders',    route:{ name: 'orders'}},
+        {key:3, label: 'Accounts',  route:{ name: 'accounts'}},
         // {key:5, label: 'Logout',  route:{ name: 'login'}}
       ]
   },
@@ -29,6 +30,7 @@ export default new Vuex.Store({
       state.user = null;
       localStorage.removeItem('localStorageState');
     },
+
   },
 // *******************************
   actions: {
@@ -45,6 +47,7 @@ export default new Vuex.Store({
     logout (context) {
       context.commit('unsetUser');
     },
+
   },
 // *******************************
 getters: {

@@ -13,7 +13,6 @@ router.get('/order/:orderid/items/:page',(req,res) => {
         where:{OrderId:req.params.orderid}
       })
       .then(items => {
-        console.log('backend rows',items.length);
         res.send(items);
       })
   } else {
@@ -35,10 +34,7 @@ router.get('/order/:orderid/items/:page',(req,res) => {
 });
 
 router.get('/orderitem',(req,res) => {
-  console.log('++++++++++++++++++++++++++++++++++++++++++');
   const i = db.models.Orderitem.build();
-  console.log(i);
-  console.log('++++++++++++++++++++++++++++++++++++++++++');
   res.send(i);
 });
 
@@ -59,11 +55,9 @@ router.get('/orderitem',(req,res) => {
  });
 
  router.post('/orderitem',(req,res) => {
-   console.log('zxzxzxzxzxzxzxzxzxzxzxzx A');
    db.models.Orderitem
    .create(req.body)
    .then((item) => {
-     console.log('zxzxzxzxzxzxzxzxzxzxzxzx B',item);
      item.setUser(req.body.UserId);
      db.models.Orderitem
        .findByPk(
@@ -73,7 +67,6 @@ router.get('/orderitem',(req,res) => {
            ]}
          )
        .then(item => {
-         console.log('zxzxzxzxzxzxzxzxzxzxzxzx C',item);
          res.send(item);
        })
        .catch(error => {

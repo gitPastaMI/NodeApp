@@ -14,17 +14,14 @@ const Orderitem = db.define('Orderitem', {
     type: DataTypes.DECIMAL(8,2),
     default: 0
   },
+  total_price: {
+    type: DataTypes.DECIMAL(8,2),
+    default: 0
+  },
   status: {
     type: DataTypes.STRING,
     defaultValue: 'NEW'
   },
-},
-{
-  getterMethods: {
-    total_price () {
-      return this.qty * this.unit_price;
-    }
-  }
 },
 {
   /*
