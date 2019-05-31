@@ -14,13 +14,16 @@
       <div class="" v-for="order in orders" v-on:click="edit(order)">
         {{order}}
       </div>
+      <div class="" v-if="(orders) && (orders.length===0)">
+        NO DATA FOUND
+      </div>
     </div>
 
   </div>
 </template>
 
 <script>
-import API from '@/service/orders'
+import API from '@/api'
 import error from '@/components/Error'
 export default {
   name: 'Orders',
@@ -42,13 +45,16 @@ export default {
     },
 
     read () {
+      console.log('comp order list read');
       this.toggleLoading();
       API
-        .getOrders()
+        .getList('/orders',{owner:this.$store.getters.getUser.id, page:0})
         .then(data => {
+          console.log('comp order list read data',data);
           (data.errors)?this.error = data.errors:this.orders = data;
         })
         .catch(error => {
+          console.log('comp order list read error',error);
           this.error = error;
         })
         .then(()=>{
@@ -57,11 +63,11 @@ export default {
     },
 
     add () {
-      this.$router.push({name: 'ordernew'});
+      this.$router.push({name: 'order.new'});
     },
 
     edit (order) {
-      this.$router.push({name: 'orderedit', params:{orderid:order.id}});
+      this.$router.push({name: 'order.edit', params:{orderid:order.id}});
     },
 
     exit () {

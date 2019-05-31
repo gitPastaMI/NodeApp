@@ -5,116 +5,117 @@ const db = require('../db');
 // *****************************************************************************
 // http://docs.sequelizejs.com/class/lib/model.js~Model.html
 // *****************************************************************************
-router.get('/order/:orderid/items/:page',(req,res) => {
-  if (req.params.page==0) {
+
+router.get('/items',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend orderitems get',req.query,req.url);
+  console.log(' ');
+  db.models.Orderitem
+    .findAll({
+      order: [['createdAt', 'DESC']],
+      where: {OrderId: req.query.parent}
+    })
+    .then(items => {
+      res.send(items);
+    })
+});
+
+router.get('/item',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend item get',req.query,req.url);
+  console.log(' ');
+  if (req.query.detail) {
+    console.log(' ');
+    console.log('=====>>>>> backend item detail',req.query.detail);
+    console.log(' ');
     db.models.Orderitem
-      .findAll({
-        order:[['createdAt', 'DESC']],
-        where:{OrderId:req.params.orderid}
-      })
-      .then(items => {
-        res.send(items);
+      .findByPk(
+        req.query.detail,
+        { include: [
+          { model: db.models.User}
+        ]}
+      )
+      .then(item => {
+        console.log(' ');
+        console.log('=====>>>>> backend item findpk include',item);
+        console.log(' ');
+        res.send(item);
       })
   } else {
-    const PAGESIZE = 10;
-    db.models.Orderitem
-      .findAll({
-        order:[['createdAt', 'DESC']],
-        offset: (req.params.page -1) * PAGESIZE,
-        limit: ((req.params.page -1) * PAGESIZE) + PAGESIZE,
-      })
-      .then(items => {
-          if (items.length===0) {
-            res.status(418).send('No items found');
-          } else {
-            res.send(items);
-          }
-        })
+    console.log(' ');
+    console.log('=====>>>>> backend item build');
+    console.log(' ');
+    res.send(db.models.Orderitem.build());
   }
 });
 
-router.get('/orderitem',(req,res) => {
-  const i = db.models.Orderitem.build();
-  res.send(i);
+router.post('/item',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend item post',req.query,req.url,req.body);
+  console.log(' ');
+  db.models.Orderitem
+  .create(req.body)
+  .then((item) => {
+    console.log(' ');
+    console.log('=====>>>>> backend item create',item);
+    console.log(' ');
+    db.models.Orderitem
+      .findByPk(
+        item.id,
+        { include: [
+          { model: db.models.User}
+        ]}
+      )
+      .then(item => {
+        console.log(' ');
+        console.log('=====>>>>> backend item findpk include',item);
+        console.log(' ');
+        res.send(item);
+      })
+  })
 });
 
- router.get('/orderitem/:id',(req,res) => {
-   db.models.Orderitem
-     .findByPk(
-       req.params.id,
-       { include: [
-           { model: db.models.User}
-         ]}
-       )
-     .then(item => {
-       res.send(item);
-     })
-     .catch(error => {
-       res.send(error);
-     });
- });
+router.put('/item',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend item put',req.query,req.url,req.body);
+  console.log(' ');
+  db.models.Orderitem
+    .update(req.body,{where:{id:req.body.id}})
+    .then(() => {
+      db.models.Orderitem
+        .findByPk(
+          req.body.id,
+          { include: [
+            { model: db.models.User}
+          ]}
+        )
+        .then(item => {
+          console.log(' ');
+          console.log('=====>>>>> backend item findpk include',item);
+          console.log(' ');
+          res.send(item);
+        })
+    })
+});
 
- router.post('/orderitem',(req,res) => {
-   db.models.Orderitem
-   .create(req.body)
-   .then((item) => {
-     item.setUser(req.body.UserId);
-     db.models.Orderitem
-       .findByPk(
-         item.id,
-         { include: [
-             { model: db.models.User}
-           ]}
-         )
-       .then(item => {
-         res.send(item);
-       })
-       .catch(error => {
-         res.send(error);
-       });
-     })
-     .catch(error => {
-       res.send(error);
-    });
- });
-
- router.put('/orderitem',(req,res) => {
-   db.models.Orderitem
-     .update(req.body,{where:{id:req.body.id}})
-     .then(() => {
-       db.models.Orderitem
-       .findByPk(req.body.id)
-       .then(item => {
-         item.setUser(req.body.UserId);
-         db.models.Orderitem
-           .findByPk(
-             item.id,
-             { include: [
-                 { model: db.models.User},
-               ]}
-             )
-           .then(item => {
-             res.send(item);
-           })
-           .catch(error => {
-             res.send(error);
-           });
-       })
-     })
-     .catch(error => {
-       res.send(error);
-     });
- });
-
- router.delete('/orderitem',(req,res) => {
-   db.models.Orderitem
-     .findByPk(req.body.id)
-     .then(item => {
-       item.destroy()
-       .then(() => {
-         res.send('success');
-       });
-     })
- });
+router.delete('/item',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend item delete',req.query,req.url,req.body);
+  console.log(' ');
+  db.models.Orderitem
+    .findByPk(req.body.id)
+    .then(item => {
+      console.log(' ');
+      console.log('=====>>>>> backend item delete findpk',item);
+      console.log(' ');
+      item.destroy()
+      .then(() => {
+        console.log(' ');
+        console.log('=====>>>>> backend item destroy',item);
+        console.log(' ');
+        res.send('OK');
+      });
+    })
+});
 
 module.exports = router;

@@ -14,7 +14,14 @@ const Account = db.define('Account', {
   location: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
+  // UserId: {
+  //   type: DataTypes.INTEGER,
+  //   references: {
+  //     model: db.models.User,
+  //     key: 'id'
+  //   }
+  // },
 },
 {
   /*

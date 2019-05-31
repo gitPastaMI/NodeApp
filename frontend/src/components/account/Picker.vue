@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import API from '@/service/accounts'
+import API from '@/api'
 import error from '@/components/Error'
 export default {
   name: 'Picker',
@@ -56,7 +56,8 @@ export default {
     search () {
       this.toggleLoading();
       API
-       .search(this.filter)
+       // .search(this.filter)
+       .getList('/accounts',{filter: this.filter, owner:this.$store.getters.getUser.id, page:0})
        .then(data => {
         (data.errors)?this.error = data.errors:this.items = data;
        })

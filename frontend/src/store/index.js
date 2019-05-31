@@ -8,8 +8,8 @@ export default new Vuex.Store({
     user: null,
     navbarLinks: [
         {key:1, label: 'Home',      route:{ name: 'home'}},
-        {key:2, label: 'Orders',    route:{ name: 'orders'}},
-        {key:3, label: 'Accounts',  route:{ name: 'accounts'}},
+        {key:2, label: 'Orders',    route:{ name: 'order.list'}},
+        {key:3, label: 'Accounts',  route:{ name: 'account.list'}},
         // {key:5, label: 'Logout',  route:{ name: 'login'}}
       ]
   },

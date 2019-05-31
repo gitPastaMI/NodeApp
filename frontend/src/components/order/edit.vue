@@ -1,9 +1,9 @@
 <template>
-  <div class="formContainer">
-    <div class="gridCenterd" v-if="isLoading()">
+  <div class="">
+    <div class="" v-if="isLoading()">
       <h1>Loading...</h1>
     </div>
-    <div class="gridCenterd" v-else>
+    <div class="" v-else>
       <div class="">
         {{order}}
       </div>
@@ -47,34 +47,26 @@
         {{order.User}}
       </div>
 
-      <h3>ITEMS</h3>
-      <router-view v-on:itemsaved="readitems(order.id)"/>
-      <button type="button" v-on:click="add()">+</button>
-      <div class="" v-if="items.length === 0">
-        No items found
-      </div>
-      <div class="" v-else v-for="item in items" v-on:click="edit(item.id)">
-        {{item}}
-      </div>
+      <orderitems v-bind:parent="order" v-if="order.id"/>
 
     </div>
   </div>
 </template>
 
 <script>
-import API from '@/service/orders'
-import accountpicker from '@/components/account/Picker'
+import API from '@/api'
 import error from '@/components/Error'
+import accountpicker from '@/components/account/picker'
+import orderitems from '@/components/orderitem/list'
 export default {
   name: 'Order',
 
-  components: {accountpicker,error},
+  components: {error,accountpicker,orderitems},
 
   data () {
     return {
       error: null,
       order: {},
-      items: {},
       loading: false,
     }
   },
@@ -89,17 +81,21 @@ export default {
 
     init () {
       this.toggleLoading();
+      console.log('comp order edit INIT');
       API
-        .getInitOrder()
+        .getNew('/order')
         .then(data => {
+          console.log('comp order edit INIT data',data);
           if (data.errors) {
             this.error = data.errors;
           } else {
             this.order = data;
             this.order.UserId = this.$store.getters.getUser.id;
+            console.log('comp order edit INIT order',this.order);
           }
         })
         .catch(error => {
+          console.log('comp order edit INIT err',error);
           this.error = error;
         })
         .then(()=>{
@@ -108,35 +104,16 @@ export default {
     },
 
     read (id) {
+      console.log('comp order edit READ',id);
       this.toggleLoading();
       API
-       .getOrder(id)
+       .getDetail('/order',{detail: id})
        .then(data => {
-         if (data.errors) {
-           this.error = data.errors;
-         } else {
-           this.order = data;
-           this.readitems(this.order.id);
-         }
+          console.log('comp order edit READ data',data);
+          (data.errors)?this.error = data.errors:this.order = data;
        })
        .catch(error => {
-         this.error = error;
-       })
-       .then(()=>{
-         this.toggleLoading();
-       });
-    },
-
-    readitems (orderid) {
-      this.toggleLoading();
-      API
-       .getItems(orderid)
-       .then(data => {
-         if (data.length!==0) {
-           this.items = data;
-         }
-       })
-       .catch(error => {
+         console.log('comp order edit READ err',error);
          this.error = error;
        })
        .then(()=>{
@@ -145,13 +122,16 @@ export default {
     },
 
     save () {
+      console.log('comp order edit SAVE',this.order);
       this.toggleLoading();
       API
-        .saveOrder(this.order)
+        .saveDetail('/order',this.order)
         .then(data => {
+          console.log('comp order edit SAVE data',data);
           (data.errors)?this.error = data.errors:this.order = data;
         })
         .catch(error => {
+          console.log('comp order edit SAVE err',error);
           this.error = error;
         })
         .then(()=>{
@@ -160,13 +140,16 @@ export default {
     },
 
     remove () {
+      console.log('comp order edit REMOVE',this.order);
       this.toggleLoading();
       API
-        .removeOrder(this.order)
+        .removeDetail('/order',this.order)
         .then(data => {
+          console.log('comp order edit REMOVE data',data);
           this.$router.push({name: 'orders'});
         })
         .catch(error => {
+          console.log('comp order edit REMOVE err',error);
           this.error = error;
         })
         .then(()=>{
@@ -192,15 +175,8 @@ export default {
       this.$forceUpdate();
     },
 
-    add () {
-      this.$router.push({name: 'orderitemnew'});
-    },
-    edit (id) {
-      this.$router.push({name: 'orderitemedit', params: {itemid: id}});
-    },
-
     exit () {
-      this.$router.push({name: 'orders'});
+      this.$router.push({name: 'order.list'});
     },
 
   },

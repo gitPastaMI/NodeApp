@@ -4,11 +4,12 @@ import Store from '@/store'
 import Public from '@/components/Public'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
-import Orders from '@/components/order/Orders'
-import Order from '@/components/order/Order'
-import OrderItem from '@/components/order/Item'
-import Accounts from '@/components/account/Accounts'
-import Account from '@/components/account/Account'
+// import Orders from '@/components/order/Orders'
+import OrderList from '@/components/order/list'
+import OrderEdit from '@/components/order/edit'
+import OrderItem from '@/components/orderitem/edit'
+import AccountList from '@/components/account/list'
+import AccountEdit from '@/components/account/edit'
 
 Vue.use(Router)
 
@@ -18,16 +19,17 @@ const router = new Router({
     {path: '/public',             name: 'public',         component: Public,    meta: {isPublic: true, hasNavbar: false}},
     {path: '/login',              name: 'login',          component: Login,     meta: {isPublic: true, hasNavbar: false}},
     {path: '/home',               name: 'home',           component: Home},
-    {path: '/orders',             name: 'orders',         component: Orders},
-    {path: '/order',              name: 'ordernew',       component: Order},
-    {path: '/order/:orderid',     name: 'orderedit',      component: Order,
+    {path: '/orders',             name: 'order.list',     component: OrderList},
+    {path: '/order',              name: 'order.new',      component: OrderEdit},
+    {path: '/order/:orderid',     name: 'order.edit',     component: OrderEdit,
       children: [
-        {path: 'item',            name: 'orderitemnew',   component: OrderItem, meta: {hasNavbar: false}},
-        {path: 'item/:itemid',    name: 'orderitemedit',  component: OrderItem, meta: {hasNavbar: false}}
-    ]},
-    {path: '/accounts',           name: 'accounts',       component: Accounts},
-    {path: '/account',            name: 'accountnew',     component: Account},
-    {path: '/account/:accountid', name: 'accountedit',    component: Account},
+        {path: 'item',            name: 'item.new',        component: OrderItem ,props: true},//, meta: {hasNavbar: false}},
+        {path: 'item/:itemid',    name: 'item.edit',       component: OrderItem ,props: true},//, meta: {hasNavbar: false}}
+      ]
+    },
+    {path: '/accounts',           name: 'account.list',    component: AccountList},
+    {path: '/account',            name: 'account.new',     component: AccountEdit},
+    {path: '/account/:accountid', name: 'account.edit',    component: AccountEdit},
     {path: '*',  redirect: {name: 'login'}}
   ]
 })

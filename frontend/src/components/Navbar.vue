@@ -1,16 +1,16 @@
 <template>
-  <div class="navbarComponent" v-if="hasNavbar">
+  <div class="" v-if="hasNavbar">
     <nav>
       <span class="">
         <img src="../assets/logo.png" height="10%" width="10%">
+      </span>
+      <span class="" v-if="user">
+        {{user.username}}
       </span>
       <router-link v-if="isLogged" v-for="link in links" :to="link.route" exact tag="span" class="nav-item" :key="link.key">
         {{link.label}}
       </router-link>
       <router-link v-else :to="{name: 'login'}" exact tag="span" class="nav-item">Login</router-link>
-      <span class="nav-item">
-        {{user.username}}
-      </span>
       <span class="nav-item" v-on:click="logout()">
         Logout
       </span>

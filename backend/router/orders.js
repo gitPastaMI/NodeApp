@@ -6,73 +6,89 @@ const db = require('../db');
 // http://docs.sequelizejs.com/class/lib/model.js~Model.html
 // *****************************************************************************
 
-router.get('/orders/:page',(req,res) => {
-  if (req.params.page==0) {
-    db.models.Order
-      .findAndCountAll({order:[['createdAt', 'DESC']]})
-      .then(orders => {
-        if (orders.count===0) {
-          res.status(418).send('No orders found');
-        } else {
-          res.send(orders.rows);
-        }
-      })
-      .catch(error => {
-        res.send(error);
-      });
-  } else {
-    const PAGESIZE = 10;
+router.get('/orders',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend orders get',req.query,req.url);
+  console.log(' ');
+  const Sequelize = require('sequelize');
+  if (req.query.filter) {
     db.models.Order
       .findAll({
         order:[['createdAt', 'DESC']],
-        offset: (req.params.page -1) * PAGESIZE,
-        limit: ((req.params.page -1) * PAGESIZE) + PAGESIZE,
-      })
-      .then(orders => {
-        if (orders.length===0) {
-          res.status(418).send('No orders found');
-        } else {
-          res.send(orders);
+        where: {
+          UserId: {[Sequelize.Op.eq]: req.query.owner},
+          [Sequelize.Op.or]: [
+            {order_num: {[Sequelize.Op.substring]: req.query.filter}},
+            {id: {[Sequelize.Op.eq]: req.query.filter}},
+          ]
         }
       })
-      .catch(error => {
-        res.send(error);
-      });
+      .then(orders => {
+          res.send(orders);
+      })
+  } else {
+    db.models.Order
+    .findAll({
+      order:[['createdAt', 'DESC']],
+      where: {
+        UserId: {[Sequelize.Op.eq]: req.query.owner}
+      }
+    })
+    .then(orders => {
+      res.send(orders);
+    })
   }
 });
 
 router.get('/order',(req,res) => {
-  res.send(db.models.Order.build());
-});
-
-router.get('/order/:id',(req,res) => {
-  db.models.Order
-    .findByPk(
-      req.params.id,
-      { include: [
+  console.log(' ');
+  console.log('=====>>>>> backend order get',req.query,req.url);
+  console.log(' ');
+  if (req.query.detail) {
+    console.log(' ');
+    console.log('=====>>>>> backend order detail',req.query.detail);
+    console.log(' ');
+    db.models.Order
+      .findByPk(
+        req.query.detail,
+        { include: [
           { model: db.models.User},
           { model: db.models.Account},
           { model: db.models.Account, as: 'Shipto' },
           { model: db.models.Account, as: 'Billto' },
         ]}
       )
-    .then(order => {
-      res.send(order);
-    })
-    .catch(error => {
-      res.send(error);
-    });
+      .then(order => {
+        console.log(' ');
+        console.log('=====>>>>> backend order findpk include',order);
+        console.log(' ');
+        res.send(order);
+      })
+  } else {
+    console.log(' ');
+    console.log('=====>>>>> backend order build');
+    console.log(' ');
+    res.send(db.models.Order.build());
+  }
 });
 
 router.post('/order',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend order post',req.query,req.url,req.body);
+  console.log(' ');
   db.models.Order
   .create(req.body)
   .then((order) => {
+    console.log(' ');
+    console.log('=====>>>>> backend order create',order);
+    console.log(' ');
     order.setUser(req.body.UserId);
     order.setAccount(req.body.AccountId);
     order.setShipto(req.body.ShiptoId);
     order.setBillto(req.body.BilltoId);
-    // res.send(order);
+    console.log(' ');
+    console.log('=====>>>>> backend order set',order);
+    console.log(' ');
     db.models.Order
       .findByPk(
         order.id,
@@ -84,65 +100,69 @@ router.post('/order',(req,res) => {
           ]}
         )
       .then(order => {
+        console.log(' ');
+        console.log('=====>>>>> backend order findpk include',order);
+        console.log(' ');
         res.send(order);
       })
-      .catch(error => {
-        res.send(error);
-      });
   })
-  .catch(error => {
-    res.send(error);
-  });
 });
 
 router.put('/order',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend order put',req.query,req.url,req.body);
+  console.log(' ');
   db.models.Order
     .update(req.body,{where:{id:req.body.id}})
     .then(() => {
       db.models.Order
-      .findByPk(req.body.id)
-      .then(order => {
-        order.setUser(req.body.UserId);
-        order.setAccount(req.body.AccountId);
-        order.setShipto(req.body.ShiptoId);
-        order.setBillto(req.body.BilltoId);
-        // order.save();
-        // res.send(order);
-        db.models.Order
-          .findByPk(
-            order.id,
-            { include: [
-                { model: db.models.User},
-                { model: db.models.Account},
-                { model: db.models.Account, as: 'Shipto' },
-                { model: db.models.Account, as: 'Billto' },
-              ]}
-            )
-          .then(order => {
-            res.send(order);
-          })
-          .catch(error => {
-            res.send(error);
-          });
+        .findByPk(req.body.id)
+        .then(order => {
+          order.setUser(req.body.UserId);
+          order.setAccount(req.body.AccountId);
+          order.setShipto(req.body.ShiptoId);
+          order.setBillto(req.body.BilltoId);
+          console.log(' ');
+          console.log('=====>>>>> backend order update set',order);
+          console.log(' ');
+          db.models.Order
+            .findByPk(
+              order.id,
+              { include: [
+                  { model: db.models.User},
+                  { model: db.models.Account},
+                  { model: db.models.Account, as: 'Shipto' },
+                  { model: db.models.Account, as: 'Billto' },
+                ]}
+              )
+            .then(order => {
+              console.log(' ');
+              console.log('=====>>>>> backend order findpk include',order);
+              console.log(' ');
+              res.send(order);
+            })
       })
     })
-    .catch(error => {
-      res.send(error);
-    });
 });
 
 router.delete('/order',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend order delete',req.query,req.url,req.body);
+  console.log(' ');
   db.models.Order
     .findByPk(req.body.id)
     .then(order => {
+      console.log(' ');
+      console.log('=====>>>>> backend order delete findpk',order);
+      console.log(' ');
       order.destroy()
       .then(() => {
-        res.send('success');
-      })
-     })
-    .catch(error => {
-      res.send(error);
-    });
+        console.log(' ');
+        console.log('=====>>>>> backend order destroy',order);
+        console.log(' ');
+        res.send('OK');
+      });
+    })
 });
 
 module.exports = router;

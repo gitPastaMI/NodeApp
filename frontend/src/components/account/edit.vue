@@ -1,16 +1,15 @@
 <template>
-  <div class="formContainer">
-    <div class="gridCenterd" v-if="isLoading()">
+  <div class="">
+    <div class="" v-if="isLoading()">
       <h1>Loading...</h1>
     </div>
-    <div class="gridCentered shadowed" v-else>
+    <div class="" v-else>
 
       <div class="">
         <h3>ACCOUNT</h3>
         <button type="button" v-on:click="save()">save</button>
         <button type="button" v-on:click="remove()" v-if="(account.id)">delete</button>
         <button type="button" v-on:click="exit()">exit</button>
-        <button type="button" v-on:click="getOrders()" v-if="account.id">orders</button>
         <error v-bind:errors="error"/>
       </div>
 
@@ -43,7 +42,8 @@
 </template>
 
 <script>
-import API from '@/service/accounts'
+// import API from '@/service/accounts'
+import API from '@/api'
 import error from '@/components/Error'
 export default {
   name: 'Account',
@@ -68,17 +68,22 @@ export default {
 
     init () {
       this.toggleLoading();
+      console.log('comp account edit INIT');
       API
-        .getInitAccount()
+        // .getInitAccount()
+        .getNew('/account')
         .then(data => {
+          console.log('comp account edit INIT data',data);
           if (data.errors) {
             this.error = data.errors;
           } else {
             this.account = data;
             this.account.UserId = this.$store.getters.getUser.id;
+            console.log('comp account edit INIT account',this.account);
           }
         })
         .catch(error => {
+          console.log('comp account edit INIT err',error);
           this.error = error;
         })
         .then(()=>{
@@ -87,13 +92,17 @@ export default {
     },
 
     read (id) {
+      console.log('comp account edit READ',id);
       this.toggleLoading();
       API
-       .getAccount(id)
+       // .getAccount(id)
+       .getDetail('/account',{detail: id})
        .then(data => {
+          console.log('comp account edit READ data',data);
           (data.errors)?this.error = data.errors:this.account = data;
        })
        .catch(error => {
+         console.log('comp account edit READ err',error);
          this.error = error;
        })
        .then(()=>{
@@ -102,13 +111,17 @@ export default {
     },
 
     save () {
+      console.log('comp account edit SAVE',this.account);
       this.toggleLoading();
       API
-        .saveAccount(this.account)
+        // .saveAccount(this.account)
+        .saveDetail('/account',this.account)
         .then(data => {
+          console.log('comp account edit SAVE data',data);
           (data.errors)?this.error = data.errors:this.account = data;
         })
         .catch(error => {
+          console.log('comp account edit SAVE err',error);
           this.error = error;
         })
         .then(()=>{
@@ -117,13 +130,17 @@ export default {
     },
 
     remove () {
+      console.log('comp account edit REMOVE',this.account);
       this.toggleLoading();
       API
-        .removeAccount(this.account)
+        // .removeAccount(this.account)
+        .removeDetail('/account',this.account)
         .then(data => {
+          console.log('comp account edit REMOVE data',data);
           this.$router.push({name: 'accounts'});
         })
         .catch(error => {
+          console.log('comp account edit REMOVE err',error);
           this.error = error;
         })
         .then(()=>{
@@ -132,11 +149,7 @@ export default {
     },
 
     exit () {
-      this.$router.push({name: 'accounts'});
-    },
-
-    getOrders () {
-      console.log('account component getorders');
+      this.$router.push({name: 'account.list'});
     },
 
   },
@@ -149,9 +162,5 @@ export default {
 </script>
 
 <style scoped>
-.shadowed {
-  border:thin solid;
-  border-color: LightSeaGreen 	 	;
-  box-shadow: 15px 15px 5px  CadetBlue	 	;
-}
+
 </style>

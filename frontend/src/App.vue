@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <navbar/>
-    <router-view/>
+    
+    <router-view></router-view>
   </div>
 </template>
 
@@ -31,5 +32,10 @@ div {
 }
 .gridCentered {
   grid-column-start: 2;
+}
+.shadowed {
+  border:thin solid;
+  border-color: LightSeaGreen;
+  box-shadow: 15px 15px 5px CadetBlue;
 }
 </style>

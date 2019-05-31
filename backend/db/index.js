@@ -21,7 +21,7 @@ db
     Order.belongsTo(Account, {as: 'Billto'});
     Orderitem.belongsTo(User);
     Orderitem.belongsTo(Order, {onDelete:'CASCADE'});
-    Orderitem.sync({force:true});
+    // Orderitem.sync({force:true});
     db.sync();
     console.log('Database synchronized successfully.');
   })

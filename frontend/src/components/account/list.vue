@@ -16,13 +16,16 @@
       <div class="" v-for="account in accounts" v-on:click="edit(account)">
         {{account}}
       </div>
+      <div class="" v-if="(accounts) && (accounts.length===0)">
+        NO DATA FOUND
+      </div>
     </div>
 
   </div>
 </template>
 
 <script>
-import API from '@/service/accounts'
+import API from '@/api'
 import error from '@/components/Error'
 export default {
   name: 'Accounts',
@@ -45,13 +48,16 @@ export default {
     },
 
     read () {
+      console.log('comp account list read getAccounts');
       this.toggleLoading();
       API
-        .getAccounts()
+        .getList('/accounts',{owner:this.$store.getters.getUser.id, page:0})
         .then(data => {
+          console.log('comp account list read data',data);
           (data.errors)?this.error = data.errors:this.accounts = data;
         })
         .catch(error => {
+          console.log('comp account list read error',error);
           this.error = error;
         })
         .then(()=>{
@@ -60,14 +66,19 @@ export default {
     },
 
     search () {
+      console.log('comp account list search');
       if (this.filter) {
+        console.log('comp account list search',this.filter);
         this.toggleLoading();
         API
-        .search(this.filter)
+        // .search(this.filter)
+        .getList('/accounts',{filter: this.filter, owner:this.$store.getters.getUser.id, page:0})
         .then(data => {
+          console.log('comp account list search data',data);
           (data.errors)?this.error = data.errors:this.accounts = data;
         })
         .catch(error => {
+          console.log('comp account list search err',error);
           this.error = error;
         })
         .then(()=>{
@@ -79,11 +90,11 @@ export default {
     },
 
     add () {
-      this.$router.push({name: 'accountnew'});
+      this.$router.push({name: 'account.new'});
     },
 
     edit (account) {
-      this.$router.push({name: 'accountedit', params:{accountid:account.id}});
+      this.$router.push({name: 'account.edit', params:{accountid:account.id}});
     },
 
     exit () {

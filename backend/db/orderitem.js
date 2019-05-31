@@ -8,7 +8,8 @@ const Orderitem = db.define('Orderitem', {
   },
   qty: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    default: 0
   },
   unit_price: {
     type: DataTypes.DECIMAL(8,2),
