@@ -3,7 +3,8 @@ const Sequelize = require('sequelize');
 const db = new Sequelize({
   host: 'localhost',
   dialect: 'sqlite',
-  storage: './nodeapp.db.sqlite'
+  storage: './nodeapp.db.sqlite',
+  logging: false
 });
 
 db
@@ -14,15 +15,26 @@ db
     const Account = require('./account');
     const Order = require('./order');
     const Orderitem = require('./orderitem');
+    const DeliveryGroup = require('./deliverygroup');
+    const Delivery = require('./delivery');
     Account.belongsTo(User);
     Order.belongsTo(User);
+    Orderitem.belongsTo(User);
+    DeliveryGroup.belongsTo(User);
+    Delivery.belongsTo(User);
     Order.belongsTo(Account, {foreignKey: {allowNull: false}});/*, { as: 'account', foreignKey: 'account_id', constraints: false }*/
     Order.belongsTo(Account, {as: 'Shipto'});
     Order.belongsTo(Account, {as: 'Billto'});
-    Orderitem.belongsTo(User);
-    Orderitem.belongsTo(Order, {onDelete:'CASCADE'});
-    // Orderitem.sync({force:true});
-    db.sync();
+    Orderitem.belongsTo(Order);
+    Delivery.belongsTo(DeliveryGroup);
+    Orderitem.belongsTo(Delivery);
+    const init = false;
+    db.sync({force:init}).then(() => {
+      if (init) {
+        const test = require('./test');
+        test.initData(db);
+      }
+    });
     console.log('Database synchronized successfully.');
   })
   .catch(err => {

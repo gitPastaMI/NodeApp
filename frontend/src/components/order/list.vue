@@ -6,14 +6,14 @@
     <div class="" v-else>
       <div class="">
         <h3>ORDERS</h3>
-        <button type="button" v-on:click="add()">add</button>
-        <button type="button" v-on:click="exit()">exit</button>
+        <router-link :to="{ name: 'order.new', params: {} }" tag="button">add</router-link>
+        <router-link :to="{ name: 'home', params: {} }" tag="button">exit</router-link>
         <error v-bind:errors="error"/>
       </div>
 
-      <div class="" v-for="order in orders" v-on:click="edit(order)">
+      <router-link v-for="order in orders" v-bind:key="order.id" :to="{ name: 'order.edit', params: {orderid:order.id} }" tag="div">
         {{order}}
-      </div>
+      </router-link>
       <div class="" v-if="(orders) && (orders.length===0)">
         NO DATA FOUND
       </div>
@@ -60,18 +60,6 @@ export default {
         .then(()=>{
           this.toggleLoading();
         });
-    },
-
-    add () {
-      this.$router.push({name: 'order.new'});
-    },
-
-    edit (order) {
-      this.$router.push({name: 'order.edit', params:{orderid:order.id}});
-    },
-
-    exit () {
-      this.$router.push({name: 'home'});
     },
 
   },

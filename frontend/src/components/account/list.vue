@@ -8,14 +8,14 @@
         <h3>ACCOUNTS</h3>
         <input type="text" v-model="filter" placeholder="Insert text to find ..." autofocus size="50">
         <button type="button" v-on:click="search()">search</button>
-        <button type="button" v-on:click="add()">add</button>
-        <button type="button" v-on:click="exit()">exit</button>
+        <router-link :to="{ name: 'account.new', params: {} }" tag="button">add</router-link>
+        <router-link :to="{ name: 'home', params: {} }" tag="button">exit</router-link>
         <error v-bind:errors="error"/>
       </div>
 
-      <div class="" v-for="account in accounts" v-on:click="edit(account)">
+      <router-link v-for="account in accounts" v-bind:key="account.id" :to="{ name: 'account.edit', params: {accountid:account.id} }" tag="div">
         {{account}}
-      </div>
+      </router-link>
       <div class="" v-if="(accounts) && (accounts.length===0)">
         NO DATA FOUND
       </div>
@@ -87,18 +87,6 @@ export default {
       } else {
         this.read();
       }
-    },
-
-    add () {
-      this.$router.push({name: 'account.new'});
-    },
-
-    edit (account) {
-      this.$router.push({name: 'account.edit', params:{accountid:account.id}});
-    },
-
-    exit () {
-      this.$router.push({name: 'home'});
     },
 
   },

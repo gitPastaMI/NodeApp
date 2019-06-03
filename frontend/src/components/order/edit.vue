@@ -12,7 +12,7 @@
         <h3>ORDER</h3>
         <button type="button" v-on:click="save()">save</button>
         <button type="button" v-on:click="remove()" v-if="(order.id)">delete</button>
-        <button type="button" v-on:click="exit()">exit</button>
+        <router-link :to="{ name: 'order.list', params: {} }" tag="button">exit</router-link>
         <error v-bind:errors="error"/>
       </div>
 
@@ -173,10 +173,6 @@ export default {
       this.order.BilltoId = (account===undefined)?null:account.id;
       this.order.Billto = (account===undefined)?null:account;
       this.$forceUpdate();
-    },
-
-    exit () {
-      this.$router.push({name: 'order.list'});
     },
 
   },

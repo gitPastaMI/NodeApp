@@ -1,20 +1,20 @@
 <template>
   <div class="">
-    <router-view v-on:refresh="read()"></router-view>
     <div class="" v-if="isLoading()">
       <h1>Loading...</h1>
     </div>
     <div class="" v-else>
       <div class="">
-        <h3>ITEMS</h3>
-        <router-link :to="{ name: 'item.new', params: {parent: this.parent.id} }" tag="button">add</router-link>
+        <h3>DELIVERY GROUPS</h3>
+        <router-link :to="{ name: 'delivery.group.add', params: {} }" tag="button"> + </router-link>
+        <router-link :to="{ name: 'home', params: {} }" tag="button">exit</router-link>
         <error v-bind:errors="error"/>
       </div>
 
-      <router-link v-for="item in items" v-bind:key="item.id" :to="{ name: 'item.edit', params: {itemid: item.id} }" tag="div">
-        {{item}}
-      </router-link>
-      <div class="" v-if="(items) && (items.length===0)">
+      <div class="" v-for="group in groups">
+        {{group}}
+      </div>
+      <div class="" v-if="(groups) && (groups.length===0)">
         NO DATA FOUND
       </div>
     </div>
@@ -26,13 +26,12 @@
 import API from '@/api'
 import error from '@/components/Error'
 export default {
-  name: 'Items',
+  name: 'DeliveryGroups',
   components:{error},
-  props: ['parent'],
   data () {
     return {
       error: null,
-      items: null,
+      groups: null,
       loading: false,
     }
   },
@@ -46,16 +45,16 @@ export default {
     },
 
     read () {
-      console.log('comp orderitem list read',this.parent);
+      console.log('comp group list read');
       this.toggleLoading();
       API
-        .getList('/items',{owner:this.$store.getters.getUser.id, parent: this.parent.id, page:0})
+        .getList('/delivery/groups',{owner:this.$store.getters.getUser.id, page:0})
         .then(data => {
-          console.log('comp orderitem list read data',data);
-          (data.errors)?this.error = data.errors:this.items = data;
+          console.log('comp group list read data',data);
+          (data.errors)?this.error = data.errors:this.groups = data;
         })
         .catch(error => {
-          console.log('comp orderitem list read error',error);
+          console.log('comp group list read error',error);
           this.error = error;
         })
         .then(()=>{

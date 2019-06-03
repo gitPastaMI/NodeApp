@@ -91,4 +91,18 @@ export default {
       });
   },
 
+  defineDG (path,object) {
+    console.log('API defineDG POST ',path,object);
+    return Axios
+    .post(path,object)
+    .then(response => {
+      console.log('API defineDG data',response.data);
+      return response.data;
+    })
+    .catch(error => {
+      console.log('API defineDG error',error);
+      return error;
+    });
+   },
+
 }

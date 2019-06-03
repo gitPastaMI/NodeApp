@@ -9,7 +9,7 @@
         <h3>ACCOUNT</h3>
         <button type="button" v-on:click="save()">save</button>
         <button type="button" v-on:click="remove()" v-if="(account.id)">delete</button>
-        <button type="button" v-on:click="exit()">exit</button>
+        <router-link :to="{ name: 'account.list', params: {} }" tag="button">exit</router-link>
         <error v-bind:errors="error"/>
       </div>
 
@@ -146,10 +146,6 @@ export default {
         .then(()=>{
           this.toggleLoading();
         });
-    },
-
-    exit () {
-      this.$router.push({name: 'account.list'});
     },
 
   },

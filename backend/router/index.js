@@ -5,5 +5,6 @@ router.use(require('./auth'));
 router.use(require('./accounts'));
 router.use(require('./orders'));
 router.use(require('./orderitems'));
+router.use(require('./deliverygroups'));
 
 module.exports = router;

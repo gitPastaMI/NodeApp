@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import API from '@/service/auth'
+import API from '@/api/auth'
 import error from '@/components/Error'
 export default {
   name: 'Login',

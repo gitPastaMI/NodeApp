@@ -17,6 +17,7 @@ export default {
     return Axios
       .post('/auth/login',credentials)
       .then(response => {
+        console.log('api auth login',response);
         return response.data
       });
   },

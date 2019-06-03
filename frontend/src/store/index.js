@@ -10,6 +10,7 @@ export default new Vuex.Store({
         {key:1, label: 'Home',      route:{ name: 'home'}},
         {key:2, label: 'Orders',    route:{ name: 'order.list'}},
         {key:3, label: 'Accounts',  route:{ name: 'account.list'}},
+        {key:4, label: 'Deliveries',  route:{ name: 'delivery.group.list'}},
         // {key:5, label: 'Logout',  route:{ name: 'login'}}
       ]
   },
