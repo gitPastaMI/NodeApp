@@ -47,11 +47,11 @@ router.get('/delivery/extract',(req,res) => {
   const Sequelize = require('sequelize');
   db.models.Orderitem
   .findAll({
-    attributes: ['description', [Sequelize.fn('sum', Sequelize.col('qty')), 'total']],
+    attributes: ['product_key', [Sequelize.fn('sum', Sequelize.col('qty')), 'total']],
     where: {
       status: 'NEW'
     },
-    group : ['description'],
+    group : ['product_key'],
     order: Sequelize.literal('total DESC'),
     raw: true,
   })
@@ -63,33 +63,47 @@ router.get('/delivery/extract',(req,res) => {
   });
 });
 
-router.post('/delivery/define',(req,res) => {
-  console.log(' ');
-  console.log(' ');
-  console.log('=====>>>>> backend delivery DEFINE',req.query,req.params,req.body);
-  if (req.body.deliveryProducts) {
-    let group = db.models.DeliveryGroup.build();
-    group.dg_description='Delivery '+group.dg_date;
-    console.log('=====>>>>> backend delivery group',group.id,group.dg_status,group.dg_date,group.dg_description);
-    console.log('=====>>>>> backend delivery QUERY',req.body.deliveryProducts);
-    req.body.deliveryProducts.forEach((product) => {
-      console.log('=====>>>>> backend delivery each',product.description,product.qty);
-      db.models.Orderitem.findAll({
-        where: {
-          status: 'NEW',
-          description: product.description
-        },
-        include: [{model: db.models.Order}],
-        order:[['createdAt', 'DESC']]
-      }).then(items => {
-        items.forEach(item => {
-          console.log('=====>>>>> backend delivery items',item.id,item.Order.AccountId);
-        });
-      });
-    });
-  }
-  res.send('ok');
-});
+// router.post('/delivery/define',(req,res) => {
+//   // console.log(' ');
+//   // console.log(' ');
+//   // console.log('=====>>>>> backend delivery DEFINE',req.body);
+//   if (req.body.deliveryProducts) {
+//     db.models.DeliveryGroup
+//     .create({dg_description: 'Delivery '+new Date().valueOf()})
+//     .then(group => {
+//       console.log('=====>>>>> group',group.id);
+//       req.body.deliveryProducts.forEach((product) => {
+//         let residual = product.qty;
+//         console.log('=====>>>>> product',product.description,product.qty);
+//         db.models.Orderitem.findAll({
+//           where: {
+//             status: 'NEW',
+//             description: product.description
+//           },
+//           include: [{model: db.models.Order}],
+//           order:[['createdAt', 'DESC']]
+//         }).then(items => {
+//           items.forEach(item => {
+//             if (item.qty <= residual) {
+//               db.models.Delivery.findOrCreate({
+//                 where: {DeliveryGroupId: group.id, AccountId: item.Order.AccountId, ShiptoId: item.Order.ShiptoId},
+//                 defaults: {DeliveryGroupId: group.id, AccountId: item.Order.AccountId, ShiptoId: item.Order.ShiptoId}
+//               })
+//               .then(([delivery, created]) => {
+//                 console.log('=====>>>>> ',delivery);
+//                 item.DeliveryId = delivery.id;
+//                 item.save();
+//               });
+//               residual -= item.qty;
+//               console.log('=====>>>>> item',item.id,item.Order.AccountId,item.Order.ShiptoId,item.qty,residual);
+//             }
+//           });
+//         });
+//       });
+//     });
+//   }
+//   res.send('ok');
+// });
 /*
 router.get('/order',(req,res) => {
   console.log(' ');

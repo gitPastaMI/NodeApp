@@ -91,18 +91,18 @@ export default {
       });
   },
 
-  defineDG (path,object) {
-    console.log('API defineDG POST ',path,object);
+  saveBulk (path,object) {
+    console.log('API saveBulk POST ',path,object);
     return Axios
     .post(path,object)
     .then(response => {
-      console.log('API defineDG data',response.data);
+      console.log('API saveBulk data',response.data);
       return response.data;
     })
     .catch(error => {
-      console.log('API defineDG error',error);
+      console.log('API saveBulk error',error);
       return error;
     });
-   },
+  },
 
 }

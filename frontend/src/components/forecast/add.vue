@@ -5,9 +5,9 @@
     </div>
     <div class="" v-else>
       <div class="">
-        <h3>DELIVERY GROUP</h3>
+        <h3>DELIVERY FORECAST</h3>
         <router-link :to="{ name: 'home', params: {} }" tag="button">exit</router-link>
-        <button type="button" v-on:click="define()">create</button>
+        <button type="button" v-on:click="create()">create</button>
         <error v-bind:errors="error"/>
       </div>
       <div class="" v-for="product in products">
@@ -66,16 +66,25 @@ export default {
         });
     },
 
-    define () {
+    create () {
       this.toggleLoading();
-      let deliveryProducts = [];
+      let forecast = [];
       this.products.forEach((product) => {
         if (product.confirmed) {
-          deliveryProducts.push(product);
+          // forecast.push(product);
+          forecast.push({
+            forecast_hatkey: this.$store.getters.getUser.id+'-'+new Date().valueOf(),
+            forecast_product_key: product.product_key,
+            forecast_qty: product.qty,
+            UserId: this.$store.getters.getUser.id
+          });
         }
       });
+      console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+      console.log(forecast);
+      console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
       API
-      .defineDG('/delivery/define',{deliveryProducts})
+      .saveBulk('/forecast',{forecast})
       .then(data => {
         if (data.errors) {
           this.error = data.errors;

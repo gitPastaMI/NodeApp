@@ -1,11 +1,19 @@
 const Sequelize = require('sequelize');
 
-const db = new Sequelize({
+// const db = new Sequelize({
+//   host: 'localhost',
+//   dialect: 'sqlite',
+//   storage: './nodeapp.db.sqlite',
+//   logging: false
+// });
+
+const db = new Sequelize('nodeapp_dev', 'nodeapp', 'nodeapp', {
   host: 'localhost',
-  dialect: 'sqlite',
-  storage: './nodeapp.db.sqlite',
-  logging: false
+  port: 3306,
+  dialect: 'mysql'
 });
+
+const INITDB = false;
 
 db
   .authenticate()
@@ -17,20 +25,28 @@ db
     const Orderitem = require('./orderitem');
     const DeliveryGroup = require('./deliverygroup');
     const Delivery = require('./delivery');
+    const Forecast = require('./forecast');
+
     Account.belongsTo(User);
+
     Order.belongsTo(User);
-    Orderitem.belongsTo(User);
-    DeliveryGroup.belongsTo(User);
-    Delivery.belongsTo(User);
     Order.belongsTo(Account, {foreignKey: {allowNull: false}});/*, { as: 'account', foreignKey: 'account_id', constraints: false }*/
     Order.belongsTo(Account, {as: 'Shipto'});
     Order.belongsTo(Account, {as: 'Billto'});
+    Orderitem.belongsTo(User);
     Orderitem.belongsTo(Order);
-    Delivery.belongsTo(DeliveryGroup);
     Orderitem.belongsTo(Delivery);
-    const init = false;
-    db.sync({force:init}).then(() => {
-      if (init) {
+
+    DeliveryGroup.belongsTo(User);
+    Delivery.belongsTo(User);
+    Delivery.belongsTo(DeliveryGroup);
+    Delivery.belongsTo(Account, {foreignKey: {allowNull: false}});
+    Delivery.belongsTo(Account, {as: 'Shipto'});
+
+    Forecast.belongsTo(User);
+
+    db.sync({force:INITDB}).then(() => {
+      if (INITDB) {
         const test = require('./test');
         test.initData(db);
       }

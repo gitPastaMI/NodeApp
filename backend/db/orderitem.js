@@ -2,7 +2,7 @@ const DataTypes = require('sequelize');
 const db = require('./index');
 
 const Orderitem = db.define('Orderitem', {
-  description: {
+  product_key: {
     type: DataTypes.STRING,
     allowNull: false
   },

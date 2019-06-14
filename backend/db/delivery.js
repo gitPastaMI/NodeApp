@@ -2,16 +2,6 @@ const DataTypes = require('sequelize');
 const db = require('./index');
 
 const Delivery = db.define('Delivery', {
-  delivery_num: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  delivery_date: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: DataTypes.NOW
-  },
   delivery_status: {
     type: DataTypes.STRING,
     defaultValue: 'NEW'

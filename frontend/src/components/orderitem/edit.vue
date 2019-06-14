@@ -26,7 +26,7 @@
             <input type="text" v-model="item.status" disabled>
           </div>
           <div class="">
-            <input type="text" v-model="item.description" autofocus>
+            <input type="text" v-model="item.product_key" autofocus>
             <input type="text" v-model="item.qty" v-on:change="totalPrice()">
             <input type="text" v-model="item.unit_price" v-on:change="totalPrice()">
             <input type="text" v-model="item.total_price" disabled>

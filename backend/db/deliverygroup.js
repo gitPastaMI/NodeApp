@@ -2,10 +2,13 @@ const DataTypes = require('sequelize');
 const db = require('./index');
 
 const DeliveryGroup = db.define('DeliveryGroup', {
-  dg_description: {
+  dg_key: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
+  },
+  dg_description: {
+    type: DataTypes.STRING
   },
   dg_date: {
     type: DataTypes.DATEONLY,

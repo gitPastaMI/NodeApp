@@ -11,7 +11,7 @@ import OrderItem from '@/components/orderitem/edit'
 import AccountList from '@/components/account/list'
 import AccountEdit from '@/components/account/edit'
 import DeliveryGroups from '@/components/deliverygroup/list'
-import DeliveryGroup from '@/components/deliverygroup/add'
+import Forecast from '@/components/forecast/add'
 
 Vue.use(Router)
 
@@ -33,7 +33,7 @@ const router = new Router({
     {path: '/account',            name: 'account.new',     component: AccountEdit},
     {path: '/account/:accountid', name: 'account.edit',    component: AccountEdit},
     {path: '/delivery',           name: 'delivery.group.list', component: DeliveryGroups},
-    {path: '/delivery/group',     name: 'delivery.group.add',  component: DeliveryGroup},
+    {path: '/delivery/forecast',  name: 'forecast.add',  component: Forecast},
     {path: '*',  redirect: {name: 'login'}}
   ]
 })

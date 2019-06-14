@@ -6,7 +6,7 @@
     <div class="" v-else>
       <div class="">
         <h3>DELIVERY GROUPS</h3>
-        <router-link :to="{ name: 'delivery.group.add', params: {} }" tag="button"> + </router-link>
+        <router-link :to="{ name: 'forecast.add', params: {} }" tag="button"> + </router-link>
         <router-link :to="{ name: 'home', params: {} }" tag="button">exit</router-link>
         <error v-bind:errors="error"/>
       </div>
