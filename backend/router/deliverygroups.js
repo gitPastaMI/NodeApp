@@ -40,7 +40,7 @@ router.get('/delivery/groups',(req,res) => {
   }
 });
 
-router.get('/delivery/extract',(req,res) => {
+router.get('/delivery/forecast',(req,res) => {
   console.log(' ');
   console.log('=====>>>>> backend deliverygroups get',req.query,req.url);
   console.log(' ');
@@ -61,6 +61,26 @@ router.get('/delivery/extract',(req,res) => {
     console.log(' ');
     res.send(items);
   });
+});
+
+router.get('/delivery/group',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend DeliveryGroup detail',req.query.detail);
+  console.log(' ');
+  db.models.DeliveryGroup
+    .findByPk(
+      req.query.detail,
+      { include: [
+        { model: db.models.User},
+        { model: db.models.Delivery},
+      ]}
+    )
+    .then(group => {
+      console.log(' ');
+      console.log('=====>>>>> backend deliverygroup findpk include',order);
+      console.log(' ');
+      res.send(group);
+    })
 });
 
 // router.post('/delivery/define',(req,res) => {
@@ -105,37 +125,7 @@ router.get('/delivery/extract',(req,res) => {
 //   res.send('ok');
 // });
 /*
-router.get('/order',(req,res) => {
-  console.log(' ');
-  console.log('=====>>>>> backend order get',req.query,req.url);
-  console.log(' ');
-  if (req.query.detail) {
-    console.log(' ');
-    console.log('=====>>>>> backend order detail',req.query.detail);
-    console.log(' ');
-    db.models.Order
-      .findByPk(
-        req.query.detail,
-        { include: [
-          { model: db.models.User},
-          { model: db.models.Account},
-          { model: db.models.Account, as: 'Shipto' },
-          { model: db.models.Account, as: 'Billto' },
-        ]}
-      )
-      .then(order => {
-        console.log(' ');
-        console.log('=====>>>>> backend order findpk include',order);
-        console.log(' ');
-        res.send(order);
-      })
-  } else {
-    console.log(' ');
-    console.log('=====>>>>> backend order build');
-    console.log(' ');
-    res.send(db.models.Order.build());
-  }
-});
+
 
 router.post('/order',(req,res) => {
   console.log(' ');

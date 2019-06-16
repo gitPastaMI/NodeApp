@@ -25,7 +25,7 @@
 import API from '@/api'
 import error from '@/components/Error'
 export default {
-  name: 'DeliveryGroup',
+  name: 'DeliveryForecast',
   components:{error},
   data () {
     return {
@@ -47,7 +47,7 @@ export default {
       console.log('comp group add read');
       this.toggleLoading();
       API
-        .getList('/delivery/extract',{page:0})
+        .getList('/delivery/forecast',{page:0})
         .then(data => {
           console.log('comp group add read data',data);
           (data.errors)?this.error = data.errors:this.products = data;

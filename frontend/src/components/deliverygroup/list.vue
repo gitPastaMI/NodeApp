@@ -11,9 +11,9 @@
         <error v-bind:errors="error"/>
       </div>
 
-      <div class="" v-for="group in groups">
+      <router-link v-for="group in groups" v-bind:key="group.id" :to="{ name: 'delivery.group.detail', params: {groupid:group.id} }" tag="div">
         {{group}}
-      </div>
+      </router-link>
       <div class="" v-if="(groups) && (groups.length===0)">
         NO DATA FOUND
       </div>
