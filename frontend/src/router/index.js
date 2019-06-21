@@ -13,29 +13,31 @@ import AccountEdit from '@/components/account/edit'
 import DeliveryGroups from '@/components/deliverygroup/list'
 import DeliveryGroup from '@/components/deliverygroup/detail'
 import Forecast from '@/components/forecast/add'
+import DeliveryDetail from '@/components/delivery/detail'
 
 Vue.use(Router)
 
 const router = new Router({
   mode: 'history',
   routes: [
-    {path: '/public',             name: 'public',         component: Public,    meta: {isPublic: true, hasNavbar: false}},
-    {path: '/login',              name: 'login',          component: Login,     meta: {isPublic: true, hasNavbar: false}},
-    {path: '/home',               name: 'home',           component: Home},
-    {path: '/orders',             name: 'order.list',     component: OrderList},
-    {path: '/order',              name: 'order.new',      component: OrderEdit},
-    {path: '/order/:orderid',     name: 'order.edit',     component: OrderEdit,
+    {path: '/public',               name: 'public',         component: Public,    meta: {isPublic: true, hasNavbar: false}},
+    {path: '/login',                name: 'login',          component: Login,     meta: {isPublic: true, hasNavbar: false}},
+    {path: '/home',                 name: 'home',           component: Home},
+    {path: '/orders',               name: 'order.list',     component: OrderList},
+    {path: '/order',                name: 'order.new',      component: OrderEdit},
+    {path: '/order/:orderid',       name: 'order.edit',     component: OrderEdit,
       children: [
-        {path: 'item',            name: 'item.new',        component: OrderItem ,props: true},//, meta: {hasNavbar: false}},
-        {path: 'item/:itemid',    name: 'item.edit',       component: OrderItem ,props: true},//, meta: {hasNavbar: false}}
+        {path: 'item',              name: 'item.new',        component: OrderItem ,props: true},//, meta: {hasNavbar: false}},
+        {path: 'item/:itemid',      name: 'item.edit',       component: OrderItem ,props: true},//, meta: {hasNavbar: false}}
       ]
     },
-    {path: '/accounts',           name: 'account.list',    component: AccountList},
-    {path: '/account',            name: 'account.new',     component: AccountEdit},
-    {path: '/account/:accountid', name: 'account.edit',    component: AccountEdit},
-    {path: '/deliveries',         name: 'delivery.group.list', component: DeliveryGroups},
-    {path: '/delivery/group',     name: 'delivery.group.detail', component: DeliveryGroup},
-    {path: '/delivery/forecast',  name: 'forecast.add',  component: Forecast},
+    {path: '/accounts',             name: 'account.list',    component: AccountList},
+    {path: '/account',              name: 'account.new',     component: AccountEdit},
+    {path: '/account/:accountid',   name: 'account.edit',    component: AccountEdit},
+    {path: '/forecast',             name: 'forecast.add',    component: Forecast},
+    {path: '/deliveries',           name: 'delivery.group.list', component: DeliveryGroups},
+    {path: '/delivery/group/:groupid',  name: 'delivery.group.detail', component: DeliveryGroup},
+    {path: '/delivery/:deliveryid', name: 'delivery.detail',  component: DeliveryDetail},
     {path: '*',  redirect: {name: 'login'}}
   ]
 })

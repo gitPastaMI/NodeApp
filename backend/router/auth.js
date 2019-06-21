@@ -27,16 +27,26 @@ router.post('/auth/register',(req,res) => {
   });
 
 router.post('/auth/login',(req,res) => {
+  console.log(' ');
+  console.log('=====>>>>> backend auth login post',req.url,req.qyery,req.body);
+  console.log(' ');
   db.models.User.findOne({where:{username:req.body.username}})
     .then(user => {
+      console.log('=====>>>>> backend auth login user ',user);
       if (user) {
         if (bcrypt.compareSync(req.body.password, user.password)) {
           res.send(user);
         } else {
-          res.status(418).send('Invalid password');
+          console.log('=====>>>>> backend auth login invalid password');
+          // res.status(418).send('Invalid password');
+          throw new Error('Invalid password');
+          // res.send({errors: 'Invalid password'});
         }
       } else {
-        res.status(418).send('Invalid username');
+        console.log('=====>>>>> backend auth login invalid username');
+        // res.status(418).send('Invalid username');
+        throw new Error('Invalid username');
+        // res.send({errors: 'Invalid username'});
       }
     })
 });
@@ -55,7 +65,7 @@ router.delete('/user',(req,res,next) => {
     .then(user => {
       user.destroy()
       .then(() => {
-        res.send('success');
+        res.send('ok');
       });
     })
 });

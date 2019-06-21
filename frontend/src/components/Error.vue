@@ -1,5 +1,6 @@
 <template>
   <div class="" v-if="(errors)">
+    {{errors}}
     {{errors.name}}
     <div class="" v-for="item in errors">
       {{item.type}}

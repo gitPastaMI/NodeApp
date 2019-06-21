@@ -19,6 +19,14 @@ const DeliveryGroup = db.define('DeliveryGroup', {
     type: DataTypes.STRING,
     defaultValue: 'NEW'
   },
+  dg_deliveries: {
+    type: DataTypes.INTEGER,
+    default: 0
+  },
+  dg_weight: {
+    type: DataTypes.DECIMAL(8,2),
+    default: 0
+  },
 },
 {
   /*

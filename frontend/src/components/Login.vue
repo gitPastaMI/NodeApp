@@ -73,10 +73,15 @@ export default {
       API
         .login(this.credentials)
         .then(data => {
-          this.$store.dispatch('login',data)
+          if (data.errors) {
+            this.error = data.errors;
+          } else {
+            this.$store.dispatch('login',data)
             .then(response => {
+              console.log('component login response',response);
               this.$router.push({name:'home'});
             });
+          }
         })
         .catch(error => {
           this.error = error;

@@ -27,9 +27,9 @@
           </div>
           <div class="">
             <input type="text" v-model="item.product_key" autofocus>
-            <input type="text" v-model="item.qty" v-on:change="totalPrice()">
-            <input type="text" v-model="item.unit_price" v-on:change="totalPrice()">
-            <input type="text" v-model="item.total_price" disabled>
+            <input type="text" v-model="item.qty">
+            <input type="text" v-model="item.unit_weight">
+            <input type="text" v-model="item.total_wheight" disabled>
           </div>
 
           <div class="">
@@ -67,15 +67,6 @@ export default {
   },
 
   methods:{
-    totalPrice () {
-      if (this.item) {
-        this.item.total_price = this.item.qty * this.item.unit_price;
-      //   this.$forceUpdate();
-      //   return this.item.total_price;
-      // } else {
-      //   return 0;
-      }
-    },
     toggleLoading () {
       this.loading = !this.loading;
     },

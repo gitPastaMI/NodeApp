@@ -11,11 +11,11 @@ const Orderitem = db.define('Orderitem', {
     allowNull: false,
     default: 0
   },
-  unit_price: {
+  unit_weight: {
     type: DataTypes.DECIMAL(8,2),
     default: 0
   },
-  total_price: {
+  total_weight: {
     type: DataTypes.DECIMAL(8,2),
     default: 0
   },

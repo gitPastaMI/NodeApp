@@ -72,5 +72,7 @@ export default {
 </script>
 
 <style scoped>
-
+.open {
+  background: yellow;
+}
 </style>

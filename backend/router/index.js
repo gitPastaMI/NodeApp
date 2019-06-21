@@ -7,5 +7,6 @@ router.use(require('./orders'));
 router.use(require('./orderitems'));
 router.use(require('./deliverygroups'));
 router.use(require('./forecasts'));
+router.use(require('./deliveries'));
 
 module.exports = router;

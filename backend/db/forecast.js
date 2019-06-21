@@ -2,7 +2,7 @@ const DataTypes = require('sequelize');
 const db = require('./index');
 
 const Forecast = db.define('Forecast', {
-  forecast_hatkey: {
+  forecast_key: {
     type:  DataTypes.STRING
   },
   forecast_product_key: {

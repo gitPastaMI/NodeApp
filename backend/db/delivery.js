@@ -6,6 +6,10 @@ const Delivery = db.define('Delivery', {
     type: DataTypes.STRING,
     defaultValue: 'NEW'
   },
+  delivery_weight: {
+    type: DataTypes.DECIMAL(8,2),
+    default: 0
+  },
 },
 {
   /*
@@ -18,6 +22,15 @@ const Delivery = db.define('Delivery', {
   // to the model and throw an OptimisticLockingError error when stale instances are saved.
   // Set to true or a string with the attribute name you want to use to enable.
   version: true,
+});
+
+Delivery.addHook('afterSave', (delivery, options) => {
+  if (delivery.DeliveryGroupId) {
+    db.models.DeliveryGroup.findByPk(delivery.DeliveryGroupId).then(group => {
+      group.dg_deliveries += 1;
+      group.dg_weight += delivery.delivery_weight;
+    });
+  }
 });
 
 module.exports = Delivery;

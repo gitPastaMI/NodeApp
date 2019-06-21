@@ -40,28 +40,7 @@ router.get('/delivery/groups',(req,res) => {
   }
 });
 
-router.get('/delivery/forecast',(req,res) => {
-  console.log(' ');
-  console.log('=====>>>>> backend deliverygroups get',req.query,req.url);
-  console.log(' ');
-  const Sequelize = require('sequelize');
-  db.models.Orderitem
-  .findAll({
-    attributes: ['product_key', [Sequelize.fn('sum', Sequelize.col('qty')), 'total']],
-    where: {
-      status: 'NEW'
-    },
-    group : ['product_key'],
-    order: Sequelize.literal('total DESC'),
-    raw: true,
-  })
-  .then(items => {
-    console.log(' ');
-    console.log('=====>>>>> backend deliverygroups FINDALL',items);
-    console.log(' ');
-    res.send(items);
-  });
-});
+
 
 router.get('/delivery/group',(req,res) => {
   console.log(' ');
@@ -72,12 +51,12 @@ router.get('/delivery/group',(req,res) => {
       req.query.detail,
       { include: [
         { model: db.models.User},
-        { model: db.models.Delivery},
+        { model: db.models.Delivery, include: [{model: db.models.Account}, {model: db.models.Account, as: 'Shipto'}]},
       ]}
     )
     .then(group => {
       console.log(' ');
-      console.log('=====>>>>> backend deliverygroup findpk include',order);
+      console.log('=====>>>>> backend deliverygroup findpk include',group);
       console.log(' ');
       res.send(group);
     })

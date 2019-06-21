@@ -47,7 +47,7 @@ export default {
       console.log('comp group add read');
       this.toggleLoading();
       API
-        .getList('/delivery/forecast',{page:0})
+        .getList('/forecast',{page:0})
         .then(data => {
           console.log('comp group add read data',data);
           (data.errors)?this.error = data.errors:this.products = data;
@@ -68,21 +68,22 @@ export default {
 
     create () {
       this.toggleLoading();
-      let forecast = [];
-      this.products.forEach((product) => {
-        if (product.confirmed) {
-          // forecast.push(product);
-          forecast.push({
-            forecast_hatkey: this.$store.getters.getUser.id+'-'+new Date().valueOf(),
-            forecast_product_key: product.product_key,
-            forecast_qty: product.qty,
-            UserId: this.$store.getters.getUser.id
+      let forecast = {
+        key:this.$store.getters.getUser.id+'-'+new Date().valueOf(),
+        userid:this.$store.getters.getUser.id,
+        products: []
+      };
+      console.log('comp forecast add forecast',forecast);
+      console.log('comp forecast add products',this.products);
+      this.products.forEach((item) => {
+        if (item.confirmed) {
+          forecast.products.push({
+            key: item.product_key,
+            qty: item.qty
           });
         }
       });
-      console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-      console.log(forecast);
-      console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+      console.log('comp group add create forecast',forecast);
       API
       .saveBulk('/forecast',{forecast})
       .then(data => {

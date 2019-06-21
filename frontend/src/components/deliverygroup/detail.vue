@@ -5,7 +5,20 @@
     </div>
     <div class="" v-else>
       <h3>DELIVERY GROUP</h3>
+      <router-link :to="{ name: 'delivery.group.list', params: {} }" tag="button">exit</router-link>
       <error v-bind:errors="error"/>
+      <div class="">
+        {{group}}
+      </div>
+      <div class="">
+        {{group.User}}
+      </div>
+      <router-link v-for="delivery in group.Deliveries" v-bind:key="delivery.id" :to="{ name: 'delivery.detail', params: {deliveryid:delivery.id} }" tag="div">
+        {{delivery}}
+      </router-link>
+      <div class="" v-if="(group.Deliveries) && (group.Deliveries.length===0)">
+        NO DATA FOUND
+      </div>
     </div>
   </div>
 </template>
@@ -22,7 +35,7 @@ export default {
     return {
       error: null,
       loading: false,
-      group: null,
+      group: {},
     }
   },
 
@@ -40,11 +53,11 @@ export default {
       API
         .getDetail('/delivery/group',{detail: id})
         .then(data => {
-          console.log('comp delivery detail data',data);
+          console.log('comp group detail data',data);
           (data.errors)?this.error = data.errors:this.group = data;
         })
         .catch(error => {
-          console.log('comp delivery detail error',error);
+          console.log('comp group detail error',error);
           this.error = error;
         })
         .then(()=>{

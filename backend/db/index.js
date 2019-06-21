@@ -13,6 +13,7 @@ const db = new Sequelize('nodeapp_dev', 'nodeapp', 'nodeapp', {
   dialect: 'mysql'
 });
 
+const SYNCDB = false;
 const INITDB = false;
 
 db
@@ -38,14 +39,14 @@ db
     Orderitem.belongsTo(Delivery);
 
     DeliveryGroup.belongsTo(User);
+    DeliveryGroup.hasMany(Delivery);
     Delivery.belongsTo(User);
-    Delivery.belongsTo(DeliveryGroup);
     Delivery.belongsTo(Account, {foreignKey: {allowNull: false}});
     Delivery.belongsTo(Account, {as: 'Shipto'});
 
     Forecast.belongsTo(User);
 
-    db.sync({force:INITDB}).then(() => {
+    db.sync({force:SYNCDB}).then(() => {
       if (INITDB) {
         const test = require('./test');
         test.initData(db);
