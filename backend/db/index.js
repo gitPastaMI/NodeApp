@@ -10,7 +10,8 @@ const Sequelize = require('sequelize');
 const db = new Sequelize('nodeapp_dev', 'nodeapp', 'nodeapp', {
   host: 'localhost',
   port: 3306,
-  dialect: 'mysql'
+  dialect: 'mysql',
+  logging: false
 });
 
 const SYNCDB = false;

@@ -49,7 +49,7 @@ export default {
       API
         .getList('/forecast',{page:0})
         .then(data => {
-          console.log('comp group add read data',data);
+          console.log('comp forecast add read data',data);
           (data.errors)?this.error = data.errors:this.products = data;
           this.products.forEach(function(element) {
             element.qty = element.total;
@@ -76,14 +76,14 @@ export default {
       console.log('comp forecast add forecast',forecast);
       console.log('comp forecast add products',this.products);
       this.products.forEach((item) => {
-        if (item.confirmed) {
+        // if (item.confirmed) {
           forecast.products.push({
             key: item.product_key,
-            qty: item.qty
+            qty: 10// item.qty
           });
-        }
+        // }
       });
-      console.log('comp group add create forecast',forecast);
+      console.log('comp forecast add savebulk forecast',forecast);
       API
       .saveBulk('/forecast',{forecast})
       .then(data => {

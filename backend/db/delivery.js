@@ -24,13 +24,4 @@ const Delivery = db.define('Delivery', {
   version: true,
 });
 
-Delivery.addHook('afterSave', (delivery, options) => {
-  if (delivery.DeliveryGroupId) {
-    db.models.DeliveryGroup.findByPk(delivery.DeliveryGroupId).then(group => {
-      group.dg_deliveries += 1;
-      group.dg_weight += delivery.delivery_weight;
-    });
-  }
-});
-
 module.exports = Delivery;

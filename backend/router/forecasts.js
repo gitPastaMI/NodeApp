@@ -41,8 +41,7 @@ router.post('/forecast',async (req,res) => {
         // dg_deliveries: 0,
         UserId: forecast.userid
       },{transaction: transaction});
-
-    console.log(group);
+    console.log(group.id,group.key);
     for (var p = 0; p < forecast.products.length; p++) {
       let product = forecast.products[p];
       console.log('--->>>',product);
@@ -60,6 +59,7 @@ router.post('/forecast',async (req,res) => {
           ],
           transaction: transaction
         });
+      console.log('+++++>>>>> orderitems',orderitems.length);
       for (var i = 0; i < orderitems.length; i++) {
         let item = orderitems[i];
         console.log('------>>>>>>',product.key,product.qty,' @ ',item.id,item.qty,item.Order.AccountId,item.Order.ShiptoId,item.total_weight);
@@ -70,26 +70,13 @@ router.post('/forecast',async (req,res) => {
             where: {'AccountId':item.Order.AccountId, 'ShiptoId':item.Order.ShiptoId},
             transaction: transaction
           });
-          console.log('******************************************');
-          console.log(group.id,group.dg_weight,group.dg_deliveries);
-          console.log(delivery.id,delivery.DeliveryGroupId,delivery.delivery_weight);
-          console.log(item.DeliveryId.item.status);
-          delivery.delivery_weight += item.total_weight;
-          group.dg_weight += delivery.delivery_weight;
-          group.dg_deliveries += 1;
+          delivery = delivery[0];
+          console.log('+++++>>>>> delivery',delivery.delivery_weight,item.total_weight);
+          delivery.delivery_weight += parseFloat(item.total_weight);
+          delivery = await delivery.save({transaction: transaction});
           item.DeliveryId = delivery.id;
           item.status = 'ON DELIVERY';
-          delivery = await delivery.save({transaction: transaction});
-          group = await group.save({transaction: transaction});
           item = await item.save({transaction: transaction});
-          console.log('++++++++++++++++++++++++++++++++++++++++++');
-          console.log(group.id,group.dg_weight,group.dg_deliveries);
-          console.log(delivery.id,delivery.delivery_weight);
-          console.log(item.DeliveryId.item.status);
-    //       let tw = delivery.total_weight += item.total_weight;
-    //       delivery = await delivery.update({total_weight: tw},{transaction: transaction});
-    //       item = await item.update({'DeliveryId': delivery.id, 'status': 'ON DELIVERY'},{transaction: transaction});
-    //       console.log('delivered',delivery.id,item);
           product.qty -= item.qty;
           if (product.qty ===0) {
             break;
@@ -98,10 +85,13 @@ router.post('/forecast',async (req,res) => {
       }
     }
 
-    // await transaction.commit();
-    await transaction.rollback();
+    await transaction.commit();
+    // await transaction.rollback();
+    res.send('OK');
   } catch (e) {
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxx',e);
     await transaction.rollback();
+    res.json({error: e});
   } finally {
   }
 });

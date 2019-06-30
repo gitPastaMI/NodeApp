@@ -25,6 +25,35 @@ const Orderitem = db.define('Orderitem', {
   },
 },
 {
+  hooks: {
+    beforeCreate: function (orderitem) {},
+    beforeDestroy: function (orderitem) {},
+    beforeUpdate: function (orderitem) {},
+    beforeSave: function (orderitem) {},
+    beforeUpsert: function (orderitem) {},
+    afterCreate: function (orderitem) {
+      orderitem.total_weight = orderitem.qty * orderitem.unit_weight;
+    },
+    afterDestroy: function (orderitem) {},
+    afterUpdate: function (orderitem) {
+      orderitem.total_weight = orderitem.qty * orderitem.unit_weight;
+    },
+    afterSave: function (orderitem) {
+      orderitem.total_weight = orderitem.qty * orderitem.unit_weight;
+    },
+    afterUpsert: function (orderitem) {
+      orderitem.total_weight = orderitem.qty * orderitem.unit_weight;
+    },
+  }
+},
+// {
+//   getterMethods: {
+//     total_weight() {
+//       return this.qty * this.unit_weight;
+//     }
+//   }
+// },
+{
   /*
   // don't delete database entries but set the newly added attribute deletedAt
   // to the current date (when deletion was done). paranoid will only work if
